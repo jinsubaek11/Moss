@@ -4,6 +4,7 @@
 #include "Engine/LocalPlayer.h"
 #include "MainCharacter.h"
 #include "Kismet/GameplayStatics.h"
+#include "GameFramework/CharacterMovementComponent.h"
 
 
 AFirstLevelPlayer::AFirstLevelPlayer()
@@ -29,6 +30,11 @@ void AFirstLevelPlayer::BeginPlay()
 	}
 
 	mainCharacter = Cast<AMainCharacter>(UGameplayStatics::GetActorOfClass(GetWorld(), AMainCharacter::StaticClass()));
+	if (mainCharacter)
+	{
+		mainCharacter->GetCharacterMovement()->bOrientRotationToMovement = true; 
+		mainCharacter->GetCharacterMovement()->RotationRate = FRotator(0.0f, 540.0f, 0.0f);
+	}
 }
 
 void AFirstLevelPlayer::Tick(float DeltaTime)
@@ -60,14 +66,7 @@ void AFirstLevelPlayer::Turn(const FInputActionValue& Values)
 void AFirstLevelPlayer::Move(const FInputActionValue& Values)
 {
 	FVector2D axis = Values.Get<FVector2D>();
-	UE_LOG(LogTemp, Warning, TEXT("%s"), *axis.ToString());
+
 	mainCharacter->AddMovementInput(FVector(1, 0, 0), axis.X);
 	mainCharacter->AddMovementInput(FVector(0, 1, 0), axis.Y);
-
-	mainCharacter->SetActorRelativeRotation(FVector(axis.X, axis.Y, 0).Rotation());
-
-	//curRot = FVector(axis.X, axis.Y, 0).Rotation();
-	//FRotator lerpRot = FMath::Lerp(prevRot, curRot, 0.2f);
-	//mainCharacter->SetActorRelativeRotation(curRot);
-	//prevRot = curRot;
 }
