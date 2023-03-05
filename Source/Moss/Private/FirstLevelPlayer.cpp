@@ -5,12 +5,24 @@
 #include "MainCharacter.h"
 #include "Kismet/GameplayStatics.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include <MotionControllerComponent.h>
+#include <Camera/CameraComponent.h>
+#include <Components/SkeletalMeshComponent.h>
 
 
 AFirstLevelPlayer::AFirstLevelPlayer()
 {
 	PrimaryActorTick.bCanEverTick = true;
 
+	rightHand = CreateDefaultSubobject<UMotionControllerComponent>(TEXT("Right"));
+	rightHand->SetupAttachment(RootComponent);
+	rightHandMesh =CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("rightHandMesh"));
+	rightHandMesh->SetupAttachment(RootComponent);
+	ConstructorHelpers::FObjectFinder<USkeletalMesh> TempMesh(TEXT(""));
+	if (TempMesh.Succeeded())
+	{
+		rightHandMesh->SetSkeletalMesh(TempMesh.Object);
+	}
 }
 
 void AFirstLevelPlayer::BeginPlay()
@@ -52,6 +64,7 @@ void AFirstLevelPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 	{
 		inputSystem->BindAction(IA_Mouse, ETriggerEvent::Triggered, this, &AFirstLevelPlayer::Turn);
 		inputSystem->BindAction(IA_Move, ETriggerEvent::Triggered, this, &AFirstLevelPlayer::Move);
+		PlayerInputComponent->BindAction(TEXT("Jump"), IE_Pressed, this, &AFirstLevelPlayer::Jumping);
 	}
 }
 
@@ -69,4 +82,9 @@ void AFirstLevelPlayer::Move(const FInputActionValue& Values)
 
 	mainCharacter->AddMovementInput(FVector(1, 0, 0), axis.X);
 	mainCharacter->AddMovementInput(FVector(0, 1, 0), axis.Y);
+}
+
+void AFirstLevelPlayer::Jumping()
+{
+	mainCharacter->InputJump();
 }

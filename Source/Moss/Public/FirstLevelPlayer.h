@@ -33,6 +33,21 @@ public:
 	class UInputAction* IA_Mouse;
 	UPROPERTY(EditDefaultsOnly, Category = "Input")
 	class UInputAction* IA_Move;
+	
+
+	// 컨트롤러
+	UPROPERTY(EditAnywhere,Category = "MotionController")
+	class UMotionControllerComponent* rightHand;
+	UPROPERTY(EditAnywhere, Category = "MotionController")
+	class UMotionControllerComponent* leftHand;
+
+	
+	UPROPERTY(EditAnywhere, Category = "MotionController")
+	class USkeletalMeshComponent* rightHandMesh;
+	UPROPERTY(EditAnywhere, Category = "MotionController")
+	class USkeletalMeshComponent* leftHandMesh;
+
+	void Jumping();
 
 	FRotator prevRot;
 	FRotator curRot;
