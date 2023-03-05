@@ -48,6 +48,7 @@ public:
 	class USkeletalMeshComponent* leftHandMesh;
 
 	void Jumping();
+	void Attacking();
 
 	FRotator prevRot;
 	FRotator curRot;

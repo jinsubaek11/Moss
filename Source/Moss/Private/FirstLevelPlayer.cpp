@@ -65,6 +65,7 @@ void AFirstLevelPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 		inputSystem->BindAction(IA_Mouse, ETriggerEvent::Triggered, this, &AFirstLevelPlayer::Turn);
 		inputSystem->BindAction(IA_Move, ETriggerEvent::Triggered, this, &AFirstLevelPlayer::Move);
 		PlayerInputComponent->BindAction(TEXT("Jump"), IE_Pressed, this, &AFirstLevelPlayer::Jumping);
+		PlayerInputComponent->BindAction(TEXT("Attack"), IE_Pressed, this, &AFirstLevelPlayer::Attacking);
 	}
 }
 
@@ -87,4 +88,10 @@ void AFirstLevelPlayer::Move(const FInputActionValue& Values)
 void AFirstLevelPlayer::Jumping()
 {
 	mainCharacter->InputJump();
+}
+
+void AFirstLevelPlayer::Attacking()
+{
+	mainCharacter->InputAttack();
+
 }
