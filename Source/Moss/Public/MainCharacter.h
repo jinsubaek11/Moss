@@ -20,8 +20,7 @@ public:
 	virtual void Tick(float DeltaTime) override;
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
-	//점프
-	void InputJump();
+	
 
 	//무기를 넣고싶다
 	UPROPERTY(EditAnywhere)
@@ -36,11 +35,17 @@ public:
 	UPROPERTY(EditDefaultsOnly)
 	int32 initialHp = 10;
 	
+	//점프
+	void InputJump();
+	//뛰기
+	void InputRun();
+	//걷기
+	void Walk();
 	//공격당했을때
 	void OnHitEvent();
-
 	//공격
 	void InputAttack();
+
 	
 
 };

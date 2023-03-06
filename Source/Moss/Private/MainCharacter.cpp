@@ -1,13 +1,14 @@
 #include "MainCharacter.h"
 #include <Components/BoxComponent.h>
 #include <Components/StaticMeshComponent.h>
+#include "GameFramework/CharacterMovementComponent.h"
 
 
 AMainCharacter::AMainCharacter()
 {
 	PrimaryActorTick.bCanEverTick = true;
 
-	ConstructorHelpers::FObjectFinder<USkeletalMesh> tempMesh(TEXT("/Script/Engine.SkeletalMesh'/Engine/Tutorial/SubEditors/TutorialAssets/Character/TutorialTPP.TutorialTPP'"));
+	ConstructorHelpers::FObjectFinder<USkeletalMesh> tempMesh(TEXT("/Script/Engine.SkeletalMesh'/Game/VR/Assets/MainCharacter/Ch29_nonPBR_1__UE.Ch29_nonPBR_1__UE'"));
 	if (tempMesh.Succeeded())
 	{
 		GetMesh()->SetSkeletalMesh(tempMesh.Object);
@@ -16,11 +17,11 @@ AMainCharacter::AMainCharacter()
 	}
 
 	//무기넣고싶음
-	boxComp = CreateDefaultSubobject<UBoxComponent>(TEXT("boxComp"));
-	boxComp->SetupAttachment(RootComponent);
-	meshComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("meshComp"));;
-	meshComp->SetupAttachment(RootComponent);
-	boxComp->SetCollisionProfileName(TEXT("Sword"));
+	//boxComp = CreateDefaultSubobject<UBoxComponent>(TEXT("boxComp"));
+	//boxComp->SetupAttachment(RootComponent);
+	//meshComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("meshComp"));;
+	//meshComp->SetupAttachment(RootComponent);
+	//boxComp->SetCollisionProfileName(TEXT("Sword"));
 }
 
 void AMainCharacter::BeginPlay()
@@ -47,6 +48,17 @@ void AMainCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 void AMainCharacter::InputJump()
 {
 	Jump();
+}
+
+void AMainCharacter::InputRun()
+{
+	GetCharacterMovement()->MaxWalkSpeed = 500;
+}
+
+void AMainCharacter::Walk()
+{
+	GetCharacterMovement()->MaxWalkSpeed = 300;
+
 }
 
 void AMainCharacter::OnHitEvent()

@@ -18,11 +18,13 @@ AFirstLevelPlayer::AFirstLevelPlayer()
 	rightHand->SetupAttachment(RootComponent);
 	rightHandMesh =CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("rightHandMesh"));
 	rightHandMesh->SetupAttachment(RootComponent);
+	/*
 	ConstructorHelpers::FObjectFinder<USkeletalMesh> TempMesh(TEXT(""));
 	if (TempMesh.Succeeded())
 	{
 		rightHandMesh->SetSkeletalMesh(TempMesh.Object);
 	}
+	*/
 }
 
 void AFirstLevelPlayer::BeginPlay()
@@ -45,14 +47,14 @@ void AFirstLevelPlayer::BeginPlay()
 	if (mainCharacter)
 	{
 		mainCharacter->GetCharacterMovement()->bOrientRotationToMovement = true; 
-		mainCharacter->GetCharacterMovement()->RotationRate = FRotator(0.0f, 540.0f, 0.0f);
+		//mainCharacter->GetCharacterMovement()->RotationRate = FRotator(0.0f, 540.0f, 0.0f);
 	}
 }
 
 void AFirstLevelPlayer::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
+	//UE_LOG(LogTemp, Warning, TEXT("%d"), mainCharacter->GetCharacterMovement()->IsFalling());
 }
 
 void AFirstLevelPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -65,7 +67,9 @@ void AFirstLevelPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 		inputSystem->BindAction(IA_Mouse, ETriggerEvent::Triggered, this, &AFirstLevelPlayer::Turn);
 		inputSystem->BindAction(IA_Move, ETriggerEvent::Triggered, this, &AFirstLevelPlayer::Move);
 		PlayerInputComponent->BindAction(TEXT("Jump"), IE_Pressed, this, &AFirstLevelPlayer::Jumping);
-		PlayerInputComponent->BindAction(TEXT("Attack"), IE_Pressed, this, &AFirstLevelPlayer::Attacking);
+		PlayerInputComponent->BindAction(TEXT("Attack"), IE_Pressed, this, &AFirstLevelPlayer::Attack);
+		PlayerInputComponent->BindAction(TEXT("Run"), IE_Pressed, this, &AFirstLevelPlayer::Running);
+		PlayerInputComponent->BindAction(TEXT("Run"), IE_Released, this, &AFirstLevelPlayer::StopRunning);
 	}
 }
 
@@ -87,11 +91,24 @@ void AFirstLevelPlayer::Move(const FInputActionValue& Values)
 
 void AFirstLevelPlayer::Jumping()
 {
+
 	mainCharacter->InputJump();
 }
 
-void AFirstLevelPlayer::Attacking()
+void AFirstLevelPlayer::Attack()
 {
 	mainCharacter->InputAttack();
+
+}
+
+void AFirstLevelPlayer::Running()
+{
+	mainCharacter->InputRun();
+
+}
+
+void AFirstLevelPlayer::StopRunning()
+{
+	mainCharacter->Walk();
 
 }
