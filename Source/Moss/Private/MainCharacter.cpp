@@ -2,6 +2,7 @@
 #include <Components/BoxComponent.h>
 #include <Components/StaticMeshComponent.h>
 #include "GameFramework/CharacterMovementComponent.h"
+//#include "EnemyFSM.h"
 
 
 AMainCharacter::AMainCharacter()
@@ -17,11 +18,12 @@ AMainCharacter::AMainCharacter()
 	}
 
 	//무기넣고싶음
-	//boxComp = CreateDefaultSubobject<UBoxComponent>(TEXT("boxComp"));
-	//boxComp->SetupAttachment(RootComponent);
-	//meshComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("meshComp"));;
-	//meshComp->SetupAttachment(RootComponent);
-	//boxComp->SetCollisionProfileName(TEXT("Sword"));
+	boxComp = CreateDefaultSubobject<UBoxComponent>(TEXT("boxComp"));
+	boxComp->SetupAttachment(RootComponent);
+	meshComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("meshComp"));;
+	meshComp->SetupAttachment(RootComponent);
+	//ConstructorHelpers::FObjectFinder<UStaticMeshComponent> staticMesh(TEXT("/Script/Engine.StaticMesh'/Game/VR/Assets/rose_quartzs_sword.rose_quartzs_sword'"));
+	boxComp->SetCollisionProfileName(TEXT("Sword"));
 }
 
 void AMainCharacter::BeginPlay()
@@ -74,7 +76,15 @@ void AMainCharacter::OnHitEvent()
 void AMainCharacter::InputAttack()
 {
 	UE_LOG(LogTemp, Warning, TEXT("attack"));
-	
+	//부딪힌 대상 적인지 판단
+	/*
+	auto enemy = hitInfo.GetActor()->GetDefaultSubobjectByName(TEXT("FSM"));
+	if (enemy)
+	{
+		auto enemyFSM = Cast<UEnemyFSM>(enemy);
+		enemyFSM->OnDamageProcess();
+	}
+	*/
 }
 
 

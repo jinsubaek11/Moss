@@ -13,12 +13,12 @@
 AFirstLevelPlayer::AFirstLevelPlayer()
 {
 	PrimaryActorTick.bCanEverTick = true;
-
+	/*
 	rightHand = CreateDefaultSubobject<UMotionControllerComponent>(TEXT("Right"));
 	rightHand->SetupAttachment(RootComponent);
 	rightHandMesh =CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("rightHandMesh"));
 	rightHandMesh->SetupAttachment(RootComponent);
-	/*
+	
 	ConstructorHelpers::FObjectFinder<USkeletalMesh> TempMesh(TEXT(""));
 	if (TempMesh.Succeeded())
 	{
