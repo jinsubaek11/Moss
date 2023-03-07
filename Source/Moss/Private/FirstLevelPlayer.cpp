@@ -5,6 +5,7 @@
 #include "MainCharacter.h"
 #include "Kismet/GameplayStatics.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Helper.h"
 
 
 AFirstLevelPlayer::AFirstLevelPlayer()
@@ -17,11 +18,11 @@ void AFirstLevelPlayer::BeginPlay()
 {
 	Super::BeginPlay();
 
-	auto pc = Cast<APlayerController>(GetWorld()->GetFirstPlayerController());
+	playerController = Cast<APlayerController>(GetWorld()->GetFirstPlayerController());
 
-	if (pc)
+	if (playerController)
 	{
-		auto localPlayer = pc->GetLocalPlayer();
+		auto localPlayer = playerController->GetLocalPlayer();
 		auto subSystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(localPlayer);
 		if (subSystem)
 		{
@@ -35,6 +36,8 @@ void AFirstLevelPlayer::BeginPlay()
 		mainCharacter->GetCharacterMovement()->bOrientRotationToMovement = true; 
 		mainCharacter->GetCharacterMovement()->RotationRate = FRotator(0.0f, 540.0f, 0.0f);
 	}
+
+	helper = Cast<AHelper>(UGameplayStatics::GetActorOfClass(GetWorld(), AHelper::StaticClass()));
 }
 
 void AFirstLevelPlayer::Tick(float DeltaTime)
@@ -51,7 +54,11 @@ void AFirstLevelPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 	if (inputSystem)
 	{
 		inputSystem->BindAction(IA_Mouse, ETriggerEvent::Triggered, this, &AFirstLevelPlayer::Turn);
+		inputSystem->BindAction(IA_HelperMouse, ETriggerEvent::Triggered, this, &AFirstLevelPlayer::SetHelperActivate);
+		inputSystem->BindAction(IA_HelperMove, ETriggerEvent::Triggered, this, &AFirstLevelPlayer::SetHelperMove);
 		inputSystem->BindAction(IA_Move, ETriggerEvent::Triggered, this, &AFirstLevelPlayer::Move);
+		
+	
 	}
 }
 
@@ -70,3 +77,43 @@ void AFirstLevelPlayer::Move(const FInputActionValue& Values)
 	mainCharacter->AddMovementInput(FVector(1, 0, 0), axis.X);
 	mainCharacter->AddMovementInput(FVector(0, 1, 0), axis.Y);
 }
+
+void AFirstLevelPlayer::SetHelperActivate(const FInputActionValue& Values)
+{
+	if (!helper) return;
+
+	bool isActivate = Values.Get<bool>();
+	helper->SetActivate(isActivate);
+}
+
+void AFirstLevelPlayer::SetHelperMove(const FInputActionValue& Values)
+{
+	if (!helper) return;
+
+	bool isForwardMove = Values.Get<bool>();
+	double x, y;
+	playerController->GetMousePosition(x, y);
+
+	if (isForwardMove)
+	{
+		helper->SetMousePos(FVector2D(x, y), EMouseType::START);
+	}
+	else
+	{
+		helper->SetMousePos(FVector2D(x, y), EMouseType::END);
+		helper->SetIsInteractToItem(true);
+
+		FTimerHandle timer;
+		FTimerDelegate timerDelegate;
+		timerDelegate.BindLambda(
+			[this]() -> void {
+				helper->SetIsReadyToInteract(false);
+			}
+		);
+
+		GetWorld()->GetTimerManager().SetTimer(timer, timerDelegate, false, 1.f);
+	}
+
+	helper->SetIsForwardMove(isForwardMove);
+}
+
