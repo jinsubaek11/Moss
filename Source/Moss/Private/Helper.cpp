@@ -72,22 +72,34 @@ void AHelper::Tick(float DeltaTime)
 	{
 		overlappingTime += DeltaTime;
 
-		if (overlappingTime >= 1.f)
+		if (overlappingTime >= 1.f && !isReadyToInteract)
 		{
 			isReadyToInteract = true;
-
+			stopPos = GetActorLocation();
 		}
 	}
+
+	UE_LOG(LogTemp, Warning, TEXT("%d"), isReadyToInteract);
 	
 	if (isReadyToInteract)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("isReadyToInteract"));
+		FVector sub = GetActorLocation() - stopPos;
+		sub.Z = stopPos.Z;
+
+		SetActorLocation(stopPos);
+		return;
+
+		//coreMeshComp->SetWorldLocation(stopPos + sub);
+
+		//UE_LOG(LogTemp, Warning, TEXT("%s"), *sub.ToString());
 	}
 	else
 	{
-		UE_LOG(LogTemp, Warning, TEXT("isNotReadyToInteract"));
+		//coreMeshComp->SetWorldLocation(GetActorLocation());
+		//UE_LOG(LogTemp, Warning, TEXT("isNotReadyToInteract"));
 	}
 
+	
 	if (isInteractToItem && isReadyToInteract)
 	{
 		//UE_LOG(LogTemp, Warning, TEXT("startInteract"));
@@ -279,7 +291,7 @@ void AHelper::SetIsReadyToInteract(bool value)
 	isReadyToInteract = value;
 }
 
-void AHelper::DrawMovingDistLine()
+void AHelper::DrawDistanceLine()
 {
 
 }

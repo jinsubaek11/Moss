@@ -11,15 +11,15 @@ AEnemy::AEnemy()
 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 	// 1.스켈레탈메시 데이터 로드
-	ConstructorHelpers::FObjectFinder<USkeletalMesh>tempMesh(TEXT("/Script/Engine.SkeletalMesh'/Game/Characters/Mannequin_UE4/Meshes/SK_Mannequin.SK_Mannequin'"));
-	//1.데이터 로드 성공하면
-	if (tempMesh.Succeeded())
-	{
-		//1-2. 데이터할당
-		GetMesh()->SetSkeletalMesh(tempMesh.Object);
-		//1-3. 메시 위치 및 회전 설정
-		GetMesh()->SetRelativeLocationAndRotation(FVector(0, 0, -88), FRotator(0, -90, 0));
-	}
+	//ConstructorHelpers::FObjectFinder<USkeletalMesh>tempMesh(TEXT("/Script/Engine.SkeletalMesh'/Game/Characters/Mannequin_UE4/Meshes/SK_Mannequin.SK_Mannequin'"));
+	////1.데이터 로드 성공하면
+	//if (tempMesh.Succeeded())
+	//{
+	//	//1-2. 데이터할당
+	//	GetMesh()->SetSkeletalMesh(tempMesh.Object);
+	//	//1-3. 메시 위치 및 회전 설정
+	//	GetMesh()->SetRelativeLocationAndRotation(FVector(0, 0, -88), FRotator(0, -90, 0));
+	//}
 	// EnemyFSM 컴포넌트 추가
 	fsm = CreateDefaultSubobject<UEnemyFSM>(TEXT("FSM"));
 }

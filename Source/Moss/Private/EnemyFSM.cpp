@@ -52,7 +52,7 @@ void UEnemyFSM::MoveState()
 		return;
 	}
 
-	UE_LOG(LogTemp, Warning, TEXT("kkkkk"))
+	//UE_LOG(LogTemp, Warning, TEXT("kkkkk"))
 
 		// 1. 타깃 목적지가 필요하다.
 		FVector destination = target->GetActorLocation();
@@ -79,7 +79,7 @@ void UEnemyFSM::AttackState()
 	if (currentTime > attackDelayTime)
 	{
 		// 3.공격하고 싶다.
-		UE_LOG(LogTemp, Warning, TEXT("Attack!!"));
+		//UE_LOG(LogTemp, Warning, TEXT("Attack!!"));
 		// 경과 시간 초기화
 		currentTime = 0;
 	}

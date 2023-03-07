@@ -42,7 +42,7 @@ private:
 	void BackToMove();
 	void InteractToItem();
 	void FollowMainCharacter();
-	void DrawMovingDistLine();
+	void DrawDistanceLine();
 	TArray<FVector> GetPlayerViewTracePoint(float scale) const;
 
 	UFUNCTION()
@@ -87,4 +87,6 @@ private:
 	FVector mouseDir;
 
 	AInteractiveItem* currentItem;
+
+	FVector stopPos;
 };

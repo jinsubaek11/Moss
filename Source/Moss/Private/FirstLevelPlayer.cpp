@@ -111,7 +111,7 @@ void AFirstLevelPlayer::SetHelperMove(const FInputActionValue& Values)
 			}
 		);
 
-		GetWorld()->GetTimerManager().SetTimer(timer, timerDelegate, false, 1.f);
+		GetWorld()->GetTimerManager().SetTimer(timer, timerDelegate, 0.1, false);
 	}
 
 	helper->SetIsForwardMove(isForwardMove);
