@@ -17,6 +17,7 @@ AMainCharacter::AMainCharacter()
 	}
 
 	//int a;
+	//int b;
 }
 
 void AMainCharacter::BeginPlay()
