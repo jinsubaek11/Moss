@@ -30,3 +30,8 @@ void UMainCharacterAnim::NativeUpdateAnimation(float DeltaSeconds)
 	}
 
 }
+
+void UMainCharacterAnim::PlayAttackAnim()
+{
+	Montage_Play(attackAnimMontage);
+}

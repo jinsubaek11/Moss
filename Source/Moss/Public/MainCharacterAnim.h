@@ -28,4 +28,10 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category=PlayerAnim)
 	bool isInAir = false;
 	
+	//재생할 공격 애니메이션 몽타주
+	UPROPERTY(EditDefaultsOnly, Category=PlayerAnim)
+	class UAnimMontage* attackAnimMontage;
+
+	//공격 애니메이션 재생함수
+	void PlayAttackAnim();
 };
