@@ -16,7 +16,9 @@ AMainCharacter::AMainCharacter()
 		GetMesh()->SetRelativeRotation(FRotator(0, 90, 0));
 	}
 
-
+	//int a;
+	//int b;
+	//int c;
 }
 
 void AMainCharacter::BeginPlay()
