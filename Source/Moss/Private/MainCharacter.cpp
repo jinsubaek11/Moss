@@ -96,9 +96,7 @@ void AMainCharacter::InputAttack()
 	
 	}
 	
-	UE_LOG(LogTemp, Warning, TEXT("attack"));
-	
-	
+	//UE_LOG(LogTemp, Warning, TEXT("attack"));
 	
 	//LineTrace의 시작 위치
 	FVector startPos = meshComp->GetComponentLocation();
