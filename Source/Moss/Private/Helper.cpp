@@ -86,11 +86,10 @@ void AHelper::Tick(float DeltaTime)
 		FVector sub = GetActorLocation() - stopPos;
 		sub.Z = stopPos.Z;
 
+		coreMeshComp->SetRelativeLocation(sub);
 		SetActorLocation(stopPos);
+		
 		return;
-
-		//coreMeshComp->SetWorldLocation(stopPos + sub);
-
 		//UE_LOG(LogTemp, Warning, TEXT("%s"), *sub.ToString());
 	}
 	else

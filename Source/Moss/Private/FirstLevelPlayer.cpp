@@ -110,6 +110,7 @@ void AFirstLevelPlayer::SetHelperMove(const FInputActionValue& Values)
 		FTimerDelegate timerDelegate;
 		timerDelegate.BindLambda(
 			[this]() -> void {
+				UE_LOG(LogTemp, Warning, TEXT("asdfasdf"));
 				helper->SetIsReadyToInteract(false);
 			}
 		);
