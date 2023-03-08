@@ -48,4 +48,9 @@ public:
 	class AHelper* helper;
 	UPROPERTY()
 	class APlayerController* playerController;
+
+	void Jumping();
+	void Attack();
+	void Running();
+	void StopRunning();
 };
