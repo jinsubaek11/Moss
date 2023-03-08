@@ -5,6 +5,9 @@
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "InteractiveItem.h"
+#include "NiagaraComponent.h"
+#include "NiagaraSystem.h"
+#include "NiagaraDataInterfaceArrayFunctionLibrary.h"
 
 
 AHelper::AHelper()
@@ -20,6 +23,15 @@ AHelper::AHelper()
 
 	shieldMeshComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Shield Mesh Component"));
 	shieldMeshComp->SetupAttachment(RootComponent);
+
+	lineComp = CreateDefaultSubobject<UNiagaraComponent>(TEXT("LineComp"));
+	ConstructorHelpers::FObjectFinder<UNiagaraSystem> lineNs(TEXT("/Script/Niagara.NiagaraSystem'/Game/VRTemplate/VFX/NS_TeleportTrace.NS_TeleportTrace'"));
+	if (lineNs.Succeeded())
+	{
+		lineComp->SetAsset(lineNs.Object);
+	}
+	
+	lineComp->SetupAttachment(RootComponent);
 }
 
 void AHelper::BeginPlay()
@@ -79,30 +91,48 @@ void AHelper::Tick(float DeltaTime)
 		}
 	}
 
-	UE_LOG(LogTemp, Warning, TEXT("%d"), isReadyToInteract);
-	
 	if (isReadyToInteract)
 	{
-		FVector sub = GetActorLocation() - stopPos;
-		sub.Z = stopPos.Z;
+		TArray<FVector> tracePoints = GetPlayerViewTracePoint(collisionRange);
+		FHitResult hitResult;
+		FCollisionQueryParams params;
+		params.AddIgnoredActor(this);
+		params.AddIgnoredActor(mainCharacter);
 
-		SetActorLocation(stopPos);
+		bool isHit = GetWorld()->LineTraceSingleByChannel(
+			hitResult, tracePoints[0], tracePoints[1], ECollisionChannel::ECC_Visibility, params);
+
+		if (isHit)
+		{
+			FVector corePos = hitResult.Location;
+			corePos.Z = stopPos.Z;
+
+			coreMeshComp->SetWorldLocation(corePos);
+			SetActorLocation(stopPos);
+
+			overlappingTime = 0.f;
+
+			DrawDistanceLine(stopPos, corePos);
+
+			if (lineComp)
+			{
+				lineComp->SetVisibility(true);
+				UNiagaraDataInterfaceArrayFunctionLibrary::SetNiagaraArrayVector(lineComp, FName(TEXT("User.PointArray")), Lines);
+			}
+		}
+
 		return;
-
-		//coreMeshComp->SetWorldLocation(stopPos + sub);
-
-		//UE_LOG(LogTemp, Warning, TEXT("%s"), *sub.ToString());
 	}
 	else
 	{
-		//coreMeshComp->SetWorldLocation(GetActorLocation());
-		//UE_LOG(LogTemp, Warning, TEXT("isNotReadyToInteract"));
+		coreMeshComp->SetWorldLocation(GetActorLocation());
+		lineComp->SetVisibility(false);
+		ClearLine();
 	}
 
 	
 	if (isInteractToItem && isReadyToInteract)
 	{
-		//UE_LOG(LogTemp, Warning, TEXT("startInteract"));
 		isInteractToItem = false;
 		isReadyToInteract = false;
 		InteractToItem();
@@ -288,10 +318,21 @@ void AHelper::SetMousePos(FVector2D pos, EMouseType type)
 
 void AHelper::SetIsReadyToInteract(bool value)
 {
-	isReadyToInteract = value;
+	isReadyToInteract = value;	
 }
 
-void AHelper::DrawDistanceLine()
+void AHelper::ClearLine()
 {
+	Lines.RemoveAt(0, Lines.Num());
+}
 
+void AHelper::DrawDistanceLine(FVector& start, FVector& end)
+{
+	ClearLine();
+
+	for (int i = 0; i < LineSmooth; i++)
+	{
+		FVector pos = FMath::Lerp<FVector>(start, end, i / (float)LineSmooth);
+		Lines.Add(pos);
+	}
 }
