@@ -42,7 +42,8 @@ private:
 	void BackToMove();
 	void InteractToItem();
 	void FollowMainCharacter();
-	void DrawDistanceLine();
+	void ClearLine();
+	void DrawDistanceLine(FVector& start, FVector& end);
 	TArray<FVector> GetPlayerViewTracePoint(float scale) const;
 
 	UFUNCTION()
@@ -59,6 +60,8 @@ private:
 	class UStaticMeshComponent* coreMeshComp;
 	UPROPERTY(EditDefaultsOnly)
 	class UStaticMeshComponent* shieldMeshComp;
+	UPROPERTY()
+	class UNiagaraComponent* lineComp;
 
 	UPROPERTY()
 	class AMainCharacter* mainCharacter;
@@ -89,4 +92,8 @@ private:
 	AInteractiveItem* currentItem;
 
 	FVector stopPos;
+
+	UPROPERTY()
+	TArray<FVector> Lines;
+	int32 LineSmooth = 40;
 };
