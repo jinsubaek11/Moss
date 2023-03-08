@@ -57,7 +57,10 @@ void AFirstLevelPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 		inputSystem->BindAction(IA_HelperMouse, ETriggerEvent::Triggered, this, &AFirstLevelPlayer::SetHelperActivate);
 		inputSystem->BindAction(IA_HelperMove, ETriggerEvent::Triggered, this, &AFirstLevelPlayer::SetHelperMove);
 		inputSystem->BindAction(IA_Move, ETriggerEvent::Triggered, this, &AFirstLevelPlayer::Move);
-		
+		PlayerInputComponent->BindAction(TEXT("Jump"), IE_Pressed, this, &AFirstLevelPlayer::Jumping);
+		PlayerInputComponent->BindAction(TEXT("Attack"), IE_Pressed, this, &AFirstLevelPlayer::Attack);
+		PlayerInputComponent->BindAction(TEXT("Run"), IE_Pressed, this, &AFirstLevelPlayer::Running);
+		PlayerInputComponent->BindAction(TEXT("Run"), IE_Released, this, &AFirstLevelPlayer::StopRunning);
 	
 	}
 }
@@ -115,5 +118,28 @@ void AFirstLevelPlayer::SetHelperMove(const FInputActionValue& Values)
 	}
 
 	helper->SetIsForwardMove(isForwardMove);
+}
+void AFirstLevelPlayer::Jumping()
+{
+
+	mainCharacter->InputJump();
+}
+
+void AFirstLevelPlayer::Attack()
+{
+	mainCharacter->InputAttack();
+
+}
+
+void AFirstLevelPlayer::Running()
+{
+	mainCharacter->InputRun();
+
+}
+
+void AFirstLevelPlayer::StopRunning()
+{
+	mainCharacter->Walk();
+
 }
 
