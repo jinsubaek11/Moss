@@ -43,4 +43,6 @@ public:
 	void OnHitEvent();
 	//АјАн
 	void InputAttack();
+	
+	
 };

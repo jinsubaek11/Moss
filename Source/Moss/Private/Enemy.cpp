@@ -3,11 +3,15 @@
 
 #include "Enemy.h"
 #include "EnemyFSM.h"
+#include "components/capsulecomponent.h"
+
 
 
 // Sets default values
 AEnemy::AEnemy()
 {
+	GetCapsuleComponent()->SetCollisionProfileName(TEXT("EnemyPreset"));
+
 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 	// 1.스켈레탈메시 데이터 로드

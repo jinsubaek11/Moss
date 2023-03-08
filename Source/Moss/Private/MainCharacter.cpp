@@ -3,8 +3,8 @@
 #include <Components/StaticMeshComponent.h>
 #include "GameFramework/CharacterMovementComponent.h"
 #include "MainCharacterAnim.h"
+#include "EnemyFSM.h"
 #include "Components/CapsuleComponent.h"
-//#include "EnemyFSM.h"
 
 AMainCharacter::AMainCharacter()
 {
@@ -21,17 +21,21 @@ AMainCharacter::AMainCharacter()
 	}
 
 	//무기넣고싶음
-	boxComp = CreateDefaultSubobject<UBoxComponent>(TEXT("boxComp"));
-	boxComp->SetupAttachment(GetMesh());
+	//boxComp = CreateDefaultSubobject<UBoxComponent>(TEXT("boxComp"));
+	//boxComp->SetupAttachment(GetMesh());
 	meshComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("meshComp"));;
 	meshComp->SetupAttachment(GetMesh(), TEXT("hand_rSocket"));
 	meshComp->SetRelativeLocation(FVector(-42, 7, 1));
 	meshComp->SetRelativeRotation(FRotator(0, 90, 0));
+	meshComp->SetCollisionProfileName(TEXT("WeaponPreset"));
 
-	boxComp->SetCollisionProfileName(TEXT("Sword"));
-	boxComp->SetupAttachment(GetMesh(), TEXT("hand_rSocket"));
-	boxComp->SetRelativeLocation(FVector(-42, 7, 1));
-	boxComp->SetRelativeRotation(FRotator(0, 90, 0));
+	//boxComp->SetCollisionProfileName(TEXT("Sword"));
+	//boxComp->SetupAttachment(GetMesh(), TEXT("hand_rSocket"));
+	//boxComp->SetRelativeLocation(FVector(-42, 7, 1));
+	//boxComp->SetRelativeRotation(FRotator(0, 90, 0));
+	//boxComp->SetCollisionProfileName(TEXT("WeaponPreset"));
+
+
 }
 
 void AMainCharacter::BeginPlay()
@@ -83,16 +87,46 @@ void AMainCharacter::OnHitEvent()
 
 void AMainCharacter::InputAttack()
 {
-	UE_LOG(LogTemp, Warning, TEXT("attack"));
 	auto anim = Cast<UMainCharacterAnim>(GetMesh()->GetAnimInstance());
-	anim->PlayAttackAnim();
+	
+	bool ismontageplaying = anim->IsAnyMontagePlaying();
+	if(ismontageplaying==false)
+	{
+		anim->PlayAttackAnim();
+	
+	}
+	
+	UE_LOG(LogTemp, Warning, TEXT("attack"));
+	
+	
+	
+	//LineTrace의 시작 위치
+	FVector startPos = meshComp->GetComponentLocation();
+	//LineTrace의 종료 위치
+	FVector endPos = meshComp-> GetComponentLocation ()+ meshComp->GetForwardVector() *100;
+	//LineTrace의 충돌 정보를 담을 변수
+	FHitResult hitInfo;
+	//충돌옵션설정 변수
+	FCollisionQueryParams params;
+	//자기자신은 충돌에서 제외
+	params.AddIgnoredActor(this);
+	//channel 필터를 이용한 LineTrace충돌 검출 (충돌정보, 시작위치, 종료위치, 검출채널, 충돌옵션)
+	bool bHit = GetWorld()->LineTraceSingleByChannel(hitInfo, startPos, endPos,ECC_Visibility,params);
+	//Linetrace가 부딪혔을때
+	if (bHit)
+	{
+		//충돌처리 
+		
+			FTransform trans(hitInfo.ImpactPoint);
+			}
+
+
 	//부딪힌 대상 적인지 판단
-	/*
 	auto enemy = hitInfo.GetActor()->GetDefaultSubobjectByName(TEXT("FSM"));
 	if (enemy)
 	{
 		auto enemyFSM = Cast<UEnemyFSM>(enemy);
 		enemyFSM->OnDamageProcess();
 	}
-	*/
+
 }
