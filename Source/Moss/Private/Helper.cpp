@@ -83,6 +83,7 @@ void AHelper::Tick(float DeltaTime)
 	if (isOverlapping)
 	{
 		overlappingTime += DeltaTime;
+		UE_LOG(LogTemp, Warning, TEXT("isOverlapping"));
 
 		if (overlappingTime >= 1.f && !isReadyToInteract)
 		{
@@ -101,9 +102,11 @@ void AHelper::Tick(float DeltaTime)
 
 		bool isHit = GetWorld()->LineTraceSingleByChannel(
 			hitResult, tracePoints[0], tracePoints[1], ECollisionChannel::ECC_Visibility, params);
+		UE_LOG(LogTemp, Warning, TEXT("isReadyToInteract"));
 
 		if (isHit)
 		{
+			UE_LOG(LogTemp, Warning, TEXT("ddddd"));
 			FVector corePos = hitResult.Location;
 			corePos.Z = stopPos.Z;
 
