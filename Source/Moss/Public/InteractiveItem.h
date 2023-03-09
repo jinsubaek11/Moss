@@ -39,4 +39,5 @@ protected:
 
 	bool isActive = false;
 	EItemType type;
+
 };

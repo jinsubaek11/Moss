@@ -35,6 +35,18 @@ AMainCharacter::AMainCharacter()
 	//boxComp->SetRelativeRotation(FRotator(0, 90, 0));
 	//boxComp->SetCollisionProfileName(TEXT("WeaponPreset"));
 
+	//포탈애니메이션
+	ConstructorHelpers::FObjectFinder<UAnimSequence>anim(TEXT("AnimSequence'/Game/VR/Animation/MainCharacter/fine_UE.fine_UE'"));
+	if (anim.Succeeded())
+	{
+	Anim = anim.Object;
+	}
+
+	//ConstructorHelpers::FObjectFinder<UAnimBlueprint>aniBP(TEXT("AnimBlueprint'/Game/VR/Blueprints/ABP_MainCharacter.ABP_MainCharacter'"));
+	//if (aniBP.Succeeded())
+	//{
+	//	GetMesh()->SetAnimInstanceClass(aniBP.Object->GeneratedClass);
+	//}
 
 }
 
@@ -128,3 +140,18 @@ void AMainCharacter::InputAttack()
 	}
 
 }
+
+//포탈애니메이션
+void AMainCharacter::PlayAnim()
+{
+	if(!GetMesh() || !Anim) return;
+	bool bLoop = false;
+
+	GetMesh()->PlayAnimation(Anim, bLoop);
+	
+}
+
+//void AMainCharacter::AnimMode()
+//{
+
+//}

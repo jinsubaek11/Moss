@@ -25,14 +25,20 @@ public:
 
 
 	UPROPERTY(EditAnywhere)
-	class UBoxComponent* boxComp;
+	class UBoxComponent* doorway;
 	
 	UPROPERTY(EditAnywhere)
-	class UStaticMeshComponent* meshComp;
+	class UStaticMeshComponent* doorComp;
 
 	UFUNCTION()
-	void InPotal(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+	void InPortal(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
 	UFUNCTION()
-	void OutPotal(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
+	void OutPortal(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
+	
+	UPROPERTY()
+	class AMainCharacter* mainCharacter;
+
+	UPROPERTY()
+	class UMainCharacterAnim* mainCharacterAnim;
 };

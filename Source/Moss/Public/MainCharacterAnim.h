@@ -34,4 +34,9 @@ public:
 
 	//공격 애니메이션 재생함수
 	void PlayAttackAnim();
+
+	UPROPERTY(EditDefaultsOnly, Category=PlayerAnim)
+	class UAnimMontage* movingMontage;
+
+	void PlayMoveAnim();
 };

@@ -44,5 +44,12 @@ public:
 	//АјАн
 	void InputAttack();
 	
-	
+	UPROPERTY(EditAnywhere)
+	class UAnimSequence* Anim;
+
+	UFUNCTION()
+	void PlayAnim();
+
+	//UFUNCTION()
+	//void AnimMode();
 };

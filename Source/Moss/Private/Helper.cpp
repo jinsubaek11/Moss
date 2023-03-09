@@ -53,9 +53,11 @@ void AHelper::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* O
 	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	AInteractiveItem* item = Cast<AInteractiveItem>(OtherActor);
-
+	AActor* item2 = Cast<AActor>(item);
+	
 	if (item)
 	{
+	
 		currentItem = item;
 		isOverlapping = true;
 	}
