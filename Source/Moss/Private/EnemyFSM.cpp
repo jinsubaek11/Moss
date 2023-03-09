@@ -104,7 +104,8 @@ void UEnemyFSM::DieState()
 
 void UEnemyFSM::OnDamageProcess()
 {
-	me->Destroy();
+	UE_LOG(LogTemp,Warning,TEXT("Die"))
+	//me->Destroy();
 }
 
 
