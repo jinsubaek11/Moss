@@ -41,4 +41,8 @@ public:
 
 	UPROPERTY()
 	class UMainCharacterAnim* mainCharacterAnim;
+
+	UPROPERTY()
+	class AMainCharacter* charic;
+
 };
