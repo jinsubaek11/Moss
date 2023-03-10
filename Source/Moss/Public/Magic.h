@@ -23,4 +23,11 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+	UPROPERTY(EditAnywhere)
+	class UStaticMeshComponent* magicComp;
+
+	UPROPERTY(EditAnywhere)
+	class USphereComponent* magicBoxComp;
+
+	float moveSpeed = 100;
 };

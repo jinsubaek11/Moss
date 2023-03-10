@@ -5,6 +5,7 @@
 #include "MainCharacterAnim.h"
 #include "EnemyFSM.h"
 #include "Components/CapsuleComponent.h"
+#include <Animation/AnimMontage.h>
 
 AMainCharacter::AMainCharacter()
 {
@@ -42,11 +43,6 @@ AMainCharacter::AMainCharacter()
 	Anim = anim.Object;
 	}
 
-	//ConstructorHelpers::FObjectFinder<UAnimBlueprint>aniBP(TEXT("AnimBlueprint'/Game/VR/Blueprints/ABP_MainCharacter.ABP_MainCharacter'"));
-	//if (aniBP.Succeeded())
-	//{
-	//	GetMesh()->SetAnimInstanceClass(aniBP.Object->GeneratedClass);
-	//}
 
 }
 
@@ -100,12 +96,13 @@ void AMainCharacter::OnHitEvent()
 void AMainCharacter::InputAttack()
 {
 	auto anim = Cast<UMainCharacterAnim>(GetMesh()->GetAnimInstance());
-	
-	bool ismontageplaying = anim->IsAnyMontagePlaying();
-	if(ismontageplaying==false)
-	{
-		anim->PlayAttackAnim();
-	
+	if (anim) {
+		bool isMontagePlaying = anim->IsAnyMontagePlaying();
+		if (isMontagePlaying == false)
+		{
+			anim->PlayAttackAnim();
+
+		}
 	}
 	
 	//UE_LOG(LogTemp, Warning, TEXT("attack"));
@@ -151,7 +148,4 @@ void AMainCharacter::PlayAnim()
 	
 }
 
-//void AMainCharacter::AnimMode()
-//{
 
-//}

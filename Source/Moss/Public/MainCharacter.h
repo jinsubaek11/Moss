@@ -50,6 +50,4 @@ public:
 	UFUNCTION()
 	void PlayAnim();
 
-	//UFUNCTION()
-	//void AnimMode();
 };

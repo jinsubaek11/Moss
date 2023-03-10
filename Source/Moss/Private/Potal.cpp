@@ -34,10 +34,8 @@ void APotal::BeginPlay()
 	doorway->OnComponentBeginOverlap.AddDynamic(this, &APotal::InPortal);
 	doorway->OnComponentEndOverlap.AddDynamic(this, &APotal::OutPortal);
 
-	mainCharacter =Cast<AMainCharacter>(UGameplayStatics::GetActorOfClass(GetWorld(), AMainCharacter::StaticClass()));
+	mainCharacter = Cast<AMainCharacter>(UGameplayStatics::GetActorOfClass(GetWorld(), AMainCharacter::StaticClass()));
 
-	charic = Cast<AMainCharacter>(GetOwner());
-	mainCharacterAnim = Cast<UMainCharacterAnim>(charic->GetMesh()->GetAnimInstance());
 
 }
 
@@ -54,7 +52,7 @@ void APotal::InPortal(UPrimitiveComponent* OverlappedComponent, AActor* OtherAct
 	UE_LOG(LogTemp,Warning,TEXT("Fine"));
 	
 	mainCharacter->PlayAnim();
-
+	isPlayEndingAnimation = true;
 }
 
 
@@ -62,7 +60,7 @@ void APotal::OutPortal(UPrimitiveComponent* OverlappedComponent, AActor* OtherAc
 {
 	UE_LOG(LogTemp, Warning, TEXT("Out"));
 
-	mainCharacterAnim->PlayMoveAnim();
+
 
 }
 

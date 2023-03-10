@@ -6,6 +6,8 @@
 #include "Kismet/GameplayStatics.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Helper.h"
+#include "Potal.h"
+
 
 
 AFirstLevelPlayer::AFirstLevelPlayer()
@@ -38,6 +40,8 @@ void AFirstLevelPlayer::BeginPlay()
 	}
 
 	helper = Cast<AHelper>(UGameplayStatics::GetActorOfClass(GetWorld(), AHelper::StaticClass()));
+
+	potal = Cast<APotal>(UGameplayStatics::GetActorOfClass(GetWorld(), APotal::StaticClass()));
 }
 
 void AFirstLevelPlayer::Tick(float DeltaTime)
@@ -77,8 +81,18 @@ void AFirstLevelPlayer::Move(const FInputActionValue& Values)
 {
 	FVector2D axis = Values.Get<FVector2D>();
 
-	mainCharacter->AddMovementInput(FVector(1, 0, 0), axis.X);
-	mainCharacter->AddMovementInput(FVector(0, 1, 0), axis.Y);
+	if (potal->isPlayEndingAnimation)
+	{
+		mainCharacter->AddMovementInput(FVector(0, 0, 0), axis.X);
+		mainCharacter->AddMovementInput(FVector(0, 0, 0), axis.Y);
+	}
+	else
+	{
+		mainCharacter->AddMovementInput(FVector(1, 0, 0), axis.X);
+		mainCharacter->AddMovementInput(FVector(0, 1, 0), axis.Y);
+
+	}
+
 }
 
 void AFirstLevelPlayer::SetHelperActivate(const FInputActionValue& Values)
