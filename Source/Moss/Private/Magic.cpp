@@ -17,7 +17,7 @@ AMagic::AMagic()
 	magicComp=CreateDefaultSubobject<UStaticMeshComponent>(TEXT("magicComp"));
 	magicComp->SetupAttachment(magicBoxComp);
 
-	
+	//magicBoxComp->OnComponentBeginOverlap.AddDynamic(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 }
 
 // Called when the game starts or when spawned
@@ -33,8 +33,15 @@ void AMagic::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	SetActorLocation(GetActorLocation() + GetActorForwardVector().RotateAngleAxis(-45, FVector(0, 1, 0)).GetSafeNormal() * moveSpeed * DeltaTime);
+	SetActorLocation(GetActorLocation() + GetActorForwardVector().RotateAngleAxis(0, FVector(1, 0, 0)).GetSafeNormal() * moveSpeed * DeltaTime);
 	
+
+	currentTime += DeltaTime;
+	if (currentTime >= 10)
+	{
+		UE_LOG(LogTemp,Warning,TEXT("Ddd"));
+		Destroy();
+	}
 
 	//GetActorRightVector()
 	//GetActorUpVector()

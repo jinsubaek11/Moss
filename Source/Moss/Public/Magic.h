@@ -29,5 +29,9 @@ public:
 	UPROPERTY(EditAnywhere)
 	class USphereComponent* magicBoxComp;
 
-	float moveSpeed = 100;
+	float moveSpeed = 500;
+
+	float currentTime=0;
+
+
 };
