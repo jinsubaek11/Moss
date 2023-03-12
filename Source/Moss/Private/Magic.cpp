@@ -3,6 +3,10 @@
 
 #include "Magic.h"
 #include <Components/SphereComponent.h>
+#include "EnemyFSM.h"
+#include "Enemy.h"
+#include <Kismet/GameplayStatics.h>
+
 
 // Sets default values
 AMagic::AMagic()
@@ -17,15 +21,18 @@ AMagic::AMagic()
 	magicComp=CreateDefaultSubobject<UStaticMeshComponent>(TEXT("magicComp"));
 	magicComp->SetupAttachment(magicBoxComp);
 
-	//magicBoxComp->OnComponentBeginOverlap.AddDynamic(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+	
+
 }
 
 // Called when the game starts or when spawned
 void AMagic::BeginPlay()
 {
 	Super::BeginPlay();
-	
-	
+
+	enemyFSM = Cast<UEnemyFSM>(UGameplayStatics::GetActorOfClass(GetWorld(), UEnemyFSM::StaticClass()));
+
+	magicBoxComp->OnComponentBeginOverlap.AddDynamic(this, &AMagic::OverlapMagic);
 }
 
 // Called every frame
@@ -37,7 +44,7 @@ void AMagic::Tick(float DeltaTime)
 	
 
 	currentTime += DeltaTime;
-	if (currentTime >= 10)
+	if (currentTime >= 30)
 	{
 		UE_LOG(LogTemp,Warning,TEXT("Ddd"));
 		Destroy();
@@ -45,5 +52,11 @@ void AMagic::Tick(float DeltaTime)
 
 	//GetActorRightVector()
 	//GetActorUpVector()
+}
+
+void AMagic::OverlapMagic(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	enemyFSM->OnDamageProcess();
+	Destroy();
 }
 

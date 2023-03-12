@@ -43,11 +43,16 @@ public:
 	void OnHitEvent();
 	//АјАн
 	void InputAttack();
-	
+	void InputMagic();
+
 	UPROPERTY(EditAnywhere)
 	class UAnimSequence* Anim;
 
 	UFUNCTION()
 	void PlayAnim();
+
+	UPROPERTY(EditAnywhere,Category=magic)
+	TSubclassOf<class AMagic> magicFactory;
+
 
 };

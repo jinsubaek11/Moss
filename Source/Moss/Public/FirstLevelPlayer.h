@@ -56,4 +56,5 @@ public:
 	void Attack();
 	void Running();
 	void StopRunning();
+	void Magical();
 };

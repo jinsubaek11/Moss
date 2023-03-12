@@ -4,6 +4,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "MainCharacterAnim.h"
 #include "EnemyFSM.h"
+#include "Magic.h"
 #include "Components/CapsuleComponent.h"
 #include <Animation/AnimMontage.h>
 
@@ -148,4 +149,8 @@ void AMainCharacter::PlayAnim()
 	
 }
 
-
+void AMainCharacter::InputMagic()
+{
+	UE_LOG(LogTemp, Warning, TEXT("BangBang"));
+	GetWorld()->SpawnActor<AMagic>(magicFactory);
+}

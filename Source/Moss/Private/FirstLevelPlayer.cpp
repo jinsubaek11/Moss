@@ -65,7 +65,8 @@ void AFirstLevelPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 		PlayerInputComponent->BindAction(TEXT("Attack"), IE_Pressed, this, &AFirstLevelPlayer::Attack);
 		PlayerInputComponent->BindAction(TEXT("Run"), IE_Pressed, this, &AFirstLevelPlayer::Running);
 		PlayerInputComponent->BindAction(TEXT("Run"), IE_Released, this, &AFirstLevelPlayer::StopRunning);
-	
+		PlayerInputComponent->BindAction(TEXT("magic"), IE_Pressed, this, &AFirstLevelPlayer::Magical);
+
 	}
 }
 
@@ -136,8 +137,15 @@ void AFirstLevelPlayer::SetHelperMove(const FInputActionValue& Values)
 }
 void AFirstLevelPlayer::Jumping()
 {
+	if (potal->isPlayEndingAnimation)
+	{
+		return;
+	}
+	else
+	{
+		mainCharacter->InputJump();
 
-	mainCharacter->InputJump();
+	}
 }
 
 void AFirstLevelPlayer::Attack()
@@ -158,3 +166,8 @@ void AFirstLevelPlayer::StopRunning()
 
 }
 
+void AFirstLevelPlayer::Magical()
+{
+	UE_LOG(LogTemp, Warning, TEXT("Bang!"));
+	mainCharacter->InputMagic();
+}
