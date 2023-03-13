@@ -56,5 +56,6 @@ public:
 
 	class UArrowComponent* arrowComp;
 
+	class UMainCharacterAnim* mainCharacterAnim;
 
 };

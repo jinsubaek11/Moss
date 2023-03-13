@@ -42,6 +42,14 @@ void UMainCharacterAnim::PlayFinishAnim()
 	Montage_Play(finishAnimMontage);
 }
 
+void UMainCharacterAnim::PlayMagicAnim()
+{
+	Montage_Play(magicAnimMontage);
+	
+
+
+}
+
 void UMainCharacterAnim::AnimNotify_FinishEnd()
 {
 	APotal* portal = Cast<APotal>(UGameplayStatics::GetActorOfClass(GetWorld(), APotal::StaticClass()));
@@ -59,3 +67,8 @@ void UMainCharacterAnim::AnimNotify_FinishEnd()
 	}
 }
 
+void UMainCharacterAnim::AnimNotify_MagicEnd()
+{
+	UE_LOG(LogTemp,Warning,TEXT("End"));
+	isMagicEnd=true;
+}

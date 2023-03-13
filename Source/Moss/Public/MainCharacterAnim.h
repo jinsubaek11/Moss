@@ -33,11 +33,18 @@ public:
 	class UAnimMontage* attackAnimMontage;
 	UPROPERTY(EditDefaultsOnly, Category = PlayerAnim)
 	class UAnimMontage* finishAnimMontage;
+	UPROPERTY(EditDefaultsOnly, Category = PlayerAnim)
+	class UAnimMontage* magicAnimMontage;
 
 	//공격 애니메이션 재생함수
 	void PlayAttackAnim();
 	void PlayFinishAnim();
+	void PlayMagicAnim();
 
 	UFUNCTION()
 	void AnimNotify_FinishEnd();
+	UFUNCTION()
+	void AnimNotify_MagicEnd();
+
+	bool isMagicEnd=true;
 };
