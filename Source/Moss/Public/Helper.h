@@ -32,7 +32,6 @@ public:
 	void SetIsInteractToItem(bool value);
 	void SetIsReadyToInteract(bool value);
 	bool GetIsActivate() const;
-	void SetMousePos(FVector2D pos, EMouseType type);
 
 private:
 	void Move();
@@ -43,6 +42,7 @@ private:
 	void InteractToItem();
 	void FollowMainCharacter();
 	void ClearLine();
+	void SetShieldScaleSmall(bool isSmall);
 	void DrawDistanceLine(FVector& start, FVector& end);
 	TArray<FVector> GetPlayerViewTracePoint(float scale) const;
 
@@ -62,6 +62,10 @@ private:
 	class UStaticMeshComponent* shieldMeshComp;
 	UPROPERTY()
 	class UNiagaraComponent* lineComp;
+	UPROPERTY()
+	class UMaterialInterface* originalShieldMaterial;
+	UPROPERTY()
+	class UMaterialInstanceDynamic* dynamicShieldMaterial;
 
 	UPROPERTY()
 	class AMainCharacter* mainCharacter;
@@ -85,15 +89,26 @@ private:
 	float moveCoolTime = 0.3f;
 	float overlappingTime = 0.f;
 
-	FVector2D mouseStart;
-	FVector2D mouseEnd;
-	FVector mouseDir;
-
 	AInteractiveItem* currentItem;
 
+	FVector interactStartPos;
+	FVector interactEndPos;
+
 	FVector stopPos;
+	float maxDist = 400.f;
 
 	UPROPERTY()
 	TArray<FVector> Lines;
 	int32 LineSmooth = 40;
+
+	FTimerHandle scaleTimer;
+	float defaultScale = 0.6f;
+	float scaleTime = 0.f;
+	float scaleCoolTime = 0.2f;
+	bool isScaling = false;
+
+	bool isSmallMat = false;
+	float defaultFresnelExp = 5.5f;
+	float modifiedFresnelExp = 3.f;
+
 };

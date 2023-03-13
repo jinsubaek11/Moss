@@ -4,6 +4,8 @@
 
 AInteractiveItemBox::AInteractiveItemBox()
 {
+	PrimaryActorTick.bCanEverTick = true;
+
 	type = EItemType::BOX;
 }
 
@@ -11,73 +13,86 @@ void AInteractiveItemBox::BeginPlay()
 {
 	Super::BeginPlay();
 
-	startOrigin = GetActorLocation();
 }
 
 void AInteractiveItemBox::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	//if (isActive)
-	//{
-	//	InteractMove();
-	//}
+	if (isReadyToInteract && !isHighlight)
+	{		
+		BeforeInteract();
+	}
 }
 
-void AInteractiveItemBox::Interact(FVector2D mouseStart, FVector2D mouseEnd)
+void AInteractiveItemBox::BeforeInteract()
 {
-	//isActive = true;
+	isHighlight = true;
+	SetHighlight();
+}
 
-	//float deltaX = mouseEnd.X - mouseStart.X;
-	//float deltaY = mouseEnd.Y - mouseStart.Y;
+void AInteractiveItemBox::Interact(FVector start, FVector end)
+{
+	FVector dir = (end - start).GetSafeNormal();
+	float dist = FVector::Dist(start, end);
 
-	//if (abs(deltaX) > abs(deltaY))
-	//{
-	//	if (deltaX > 0)
-	//	{
-	//		moveDirection = FVector(0, 1, 0);
-	//	}
-	//	else
-	//	{
-	//		moveDirection = FVector(0, -1, 0);
-	//	}
+	startPos = GetActorLocation();
+	endPos = startPos + dir * dist;
 
-	//	moveDist = abs(deltaX);
-	//}
-	//else
-	//{
-	//	if (deltaY > 0)
-	//	{
-	//		moveDirection = FVector(-1, 0, 0);
-	//	}
-	//	else
-	//	{
-	//		moveDirection = FVector(1, 0, 0);
-	//	}
+	InteractMove();
+}
 
-	//	moveDist = abs(deltaY);
-	//}
-
-	//UE_LOG(LogTemp, Warning, TEXT("Interact"));
+void AInteractiveItemBox::AfterInteract()
+{
+	isHighlight = false;
+	SetHighlight();
 }
 
 void AInteractiveItemBox::InteractMove()
 {
-	//if (moveTime >= moveCoolTime)
-	//{
-	//	startOrigin = GetActorLocation();
-	//	isActive = false;
-	//	moveTime = 0.f;
-	//}
+	if (moveTime >= moveCoolTime)
+	{
+		AfterInteract();
 
-	//moveTime += GetWorld()->GetDeltaSeconds();
+		moveTime = 0.f;
+		GetWorld()->GetTimerManager().ClearTimer(moveTimer);
+		
+		return;
+	}
 
-	//FVector start = startOrigin;
-	//FVector end = start + moveDirection * moveDist;
-	//FVector curPos = FMath::Lerp<FVector>(start, end, moveTime / moveCoolTime);
-	//SetActorLocation(curPos);
+	moveTime += GetWorld()->GetDeltaSeconds();
 
-	//UE_LOG(LogTemp, Warning, TEXT("InteractMove"));
+	FVector pos = FMath::Lerp<FVector>(startPos, endPos, moveTime / moveCoolTime);
+	SetActorLocation(pos);
+
+	GetWorld()->GetTimerManager().SetTimer(moveTimer, this, &AInteractiveItemBox::InteractMove, 0.02);
 }
 
+void AInteractiveItemBox::SetHighlight()
+{
+	if (highlightTime >= highlightCoolTime)
+	{
+		highlightTime = 0.f;
+		GetWorld()->GetTimerManager().ClearTimer(highlightTimer);
+
+		return;
+	}
+
+	highlightTime += GetWorld()->GetDeltaSeconds();
+
+	float brightness;
+
+	if (isHighlight)
+	{
+		brightness = FMath::Lerp<float>(defaultBrightness, modifiedBrightness, highlightTime / highlightCoolTime);
+	}
+	else
+	{
+		brightness = FMath::Lerp<float>(modifiedBrightness, defaultBrightness, highlightTime / highlightCoolTime);
+	}
+
+	//dynamicMat->SetVector
+	dynamicMat->SetScalarParameterValue(TEXT("Brightness"), brightness);
+	GetWorld()->GetTimerManager().SetTimer(highlightTimer, this, &AInteractiveItemBox::SetHighlight, 0.02);
+}
 
