@@ -1,0 +1,207 @@
+#define MAX_STEPS 1000
+#define MAX_DIST 5000.
+#define SURF_DIST .00001
+
+
+struct Functions
+{
+    float2x2 Rot(float a)
+    {
+        float s = sin(a), c = cos(a);
+        return float2x2(c, -s, s, c);
+    }
+
+    float sdBox(float3 p, float3 s)
+    {
+        p = abs(p + float3(0., 0., 2000.)) - s;
+        return length(max(p, 0.)) + min(max(p.x, max(p.y, p.z)), 0.);
+    }
+
+     float GetDist(float3 p)
+    {
+        float d = sdBox(p, float3(100., 100., 100.));
+        
+        return d;
+    }
+
+    float RayMarch(float3 ro, float3 rd)
+    {
+        float dO = 0.;
+        
+        for(int i = 0; i < MAX_STEPS; i++)
+        {
+            float3 p = ro + rd * dO;
+
+            float dS = GetDist(p);
+            dO += dS;
+            
+            if (dO > MAX_DIST || abs(dS) < SURF_DIST) break;
+        }
+        
+        return dO;
+    }
+
+    float3 GetNormal(float3 p)
+    {
+        float d = GetDist(p);
+        float2 e = float2(.001, 0);
+        
+        float3 n = d - float3(GetDist(p-e.xyy), GetDist(p-e.yxy), GetDist(p-e.yyx));
+        
+        return normalize(n);
+    }
+
+    float3 render(in float3 origin, in float3 direction, out float distance)
+    {
+        float3 col = float3(0.,0.,0.);
+        float d = RayMarch(origin, direction);
+        distance = d;
+
+        if (d < MAX_DIST)
+        {
+            float3 p = origin + direction * distance;
+            float3 n = GetNormal(p);
+                    
+            float dif = dot(n, normalize(float3(1., 2., 3.)))*.5+.5;
+            col += float4(dif, dif, dif, 1.);
+        }
+
+        return col;
+    }
+
+};
+
+Functions f;
+
+float3 rayOrigin = float3(0.,0.,0.);
+float3 rayDirection = float3(0.,0.,0.);
+float3 rayUp = float3(0.,0.,0.);
+
+float4 fragColor = float4(0.0f, 0.0f, 0.0f, 1.0f);
+
+rayOrigin = float3(camPos.x,camPos.z,camPos.y);
+//rayOrigin.xz = mul(rayOrigin.xz, f.Rot(time));
+rayUp = float3(0.0f, 1.0f, 0.0f);
+float3 rayFront = float3(camDir.x, camDir.z, camDir.y);
+float3 rayRight = cross(rayFront, rayUp);  
+
+float px = (2.0f*(uv.x + 0.5f)/resolution.x - 1.0f)*75.0f*(resolution.x/resolution.y);
+float py = (2.0f*((resolution.y-uv.y) + 0.5f)/resolution.y - 1.0f)*75.0f;
+
+float3 pd = px*rayRight + py*rayUp + rayOrigin + 90.0f*rayFront;
+
+// uv = uv * 2. -1.;
+// uv *= resolution.x / resolution.y;
+// float3 pd = uv.x*rayRight + uv.y*rayUp + rayOrigin + 90.0f*rayFront;
+rayDirection = normalize(pd - rayOrigin);
+
+float distance;
+float3 color = f.render(rayOrigin, rayDirection, distance);        
+fragColor.xyz = color;   
+
+if (sceneDepth.a < distance)
+{
+    fragColor = sceneColor;        
+}
+        
+return fragColor;
+
+
+
+
+// struct Functions
+// {
+//     float2 Circle(float2 uv, float r)
+//     {
+//         return smoothstep(r, r-.01, length(uv));
+//     }
+
+//     float2x2 Rot(float a)
+//     {
+//         float s = sin(a), c = cos(a);
+//         return float2x2(c, -s, s, c);
+//     }
+
+//     float sdBox(float3 p, float3 s)
+//     {
+//         p = abs(p) - s;
+//         return length(max(p, 0.)) + min(max(p.x, max(p.y, p.z)), 0.);
+//     }
+
+//     float GetDist(float3 p)
+//     {
+//         float d = sdBox(p, float3(1., 1., 1.));
+        
+//         return d;
+//     }
+
+//     float RayMarch(float3 ro, float3 rd)
+//     {
+//         float dO = 0.;
+        
+//         for(int i = 0; i < MAX_STEPS; i++)
+//         {
+//             float3 p = ro + rd * dO;
+
+//             float dS = GetDist(p);
+//             dO += dS;
+            
+//             if (dO > MAX_DIST || abs(dS) < SUrayFront_DIST) break;
+//         }
+        
+//         return dO;
+//     }
+
+//     float3 GetNormal(float3 p)
+//     {
+//         float d = GetDist(p);
+//         float2 e = float2(.001, 0);
+        
+//         float3 n = d - float3(GetDist(p-e.xyy), GetDist(p-e.yxy), GetDist(p-e.yyx));
+        
+//         return normalize(n);
+//     }
+
+//     float3 GetRayDir(float2 uv, float3 p, float3 l, float z)
+//     {
+//         float3 f = normalize(l-p);
+//         float3 r = normalize(cross(float3(0, 1, 0), f));
+//         float3 u = cross(f, r);
+//         float3 c = f * z;
+//         float3 i = c + uv.x * r + uv.y * u;
+//         float3 d = normalize(i);
+        
+//         return d;
+//     }
+// };
+
+// Functions f;
+
+// uv = uv * 2. -1.;
+// uv.x *= resolution.x / resolution.y;
+
+// float4 col = float4(0.,0.,0., 1.);
+
+// float3 ro = float3(0., 0., -3.);
+// ro.xz = mul(ro.xz, f.Rot(time));
+// float3 rd = f.GetRayDir(uv, ro, float3(0., 0., 0.), 1.);
+
+// float d = f.RayMarch(ro, rd);
+
+// if (d < MAX_DIST)
+// {
+//     float3 p = ro + rd * d;
+//     float3 n = f.GetNormal(p);
+            
+//     float dif = dot(n, normalize(float3(1., 2., 3.)))*.5+.5;
+//     col += float4(dif, dif, dif, 1.);
+// }
+
+// //col = pow(col, float3(.4545, .4545, .4545));
+
+// if (sceneDepth.a < d)
+// {
+//     col = sceneColor;
+// }
+
+// return col;

@@ -20,17 +20,27 @@ public:
 	virtual void Tick(float DeltaTime) override;
 	
 public:
-	virtual void Interact(
-		FVector2D mouseStart = FVector2D(0), 
-		FVector2D mouseEnd = FVector2D(0)) override;
+	virtual void BeforeInteract();
+	virtual void Interact(FVector start = FVector(0), FVector end = FVector(0)) override;
+	virtual void AfterInteract();
 
 private:
 	void InteractMove();
+	void SetHighlight();
 
 private:
-	FVector startOrigin;
-	FVector moveDirection;
-	float moveDist;
+	FVector startPos;
+	FVector endPos;
+
+	FTimerHandle highlightTimer;
+	float highlightTime;
+	float highlightCoolTime = 0.5f;
+	
+	bool isHighlight = false;
+	float defaultBrightness = 0.f;
+	float modifiedBrightness = 1.f;
+
+	FTimerHandle moveTimer;
 	float moveTime;
 	float moveCoolTime = 1.f;
 };
