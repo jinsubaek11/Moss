@@ -94,28 +94,28 @@ void AFirstLevelPlayer::SetHelperMove(const FInputActionValue& Values)
 	if (!helper) return;
 
 	bool isForwardMove = Values.Get<bool>();
-	double x, y;
-	playerController->GetMousePosition(x, y);
+	//double x, y;
+	//playerController->GetMousePosition(x, y);
 
 	if (isForwardMove)
 	{
-		helper->SetMousePos(FVector2D(x, y), EMouseType::START);
+		//helper->SetMousePos(FVector2D(x, y), EMouseType::START);
 	}
 	else
 	{
-		helper->SetMousePos(FVector2D(x, y), EMouseType::END);
+		//helper->SetMousePos(FVector2D(x, y), EMouseType::END);
 		helper->SetIsInteractToItem(true);
 
 		FTimerHandle timer;
 		FTimerDelegate timerDelegate;
 		timerDelegate.BindLambda(
 			[this]() -> void {
-				UE_LOG(LogTemp, Warning, TEXT("asdfasdf"));
+				UE_LOG(LogTemp, Warning, TEXT("SetIsReadyToInteract False"));
 				helper->SetIsReadyToInteract(false);
 			}
 		);
 
-		GetWorld()->GetTimerManager().SetTimer(timer, timerDelegate, 0.1, false);
+		GetWorld()->GetTimerManager().SetTimer(timer, timerDelegate, 0.3, false);
 	}
 
 	helper->SetIsForwardMove(isForwardMove);
