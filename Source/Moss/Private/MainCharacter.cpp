@@ -4,7 +4,10 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "MainCharacterAnim.h"
 #include "EnemyFSM.h"
+#include "Magic.h"
 #include "Components/CapsuleComponent.h"
+#include <Animation/AnimMontage.h>
+#include <Components/ArrowComponent.h>
 
 AMainCharacter::AMainCharacter()
 {
@@ -23,17 +26,25 @@ AMainCharacter::AMainCharacter()
 	//무기넣고싶음
 	//boxComp = CreateDefaultSubobject<UBoxComponent>(TEXT("boxComp"));
 	//boxComp->SetupAttachment(GetMesh());
-	meshComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("meshComp"));;
+	meshComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("meshComp"));
 	meshComp->SetupAttachment(GetMesh(), TEXT("hand_rSocket"));
 	meshComp->SetRelativeLocation(FVector(-42, 7, 1));
 	meshComp->SetRelativeRotation(FRotator(0, 90, 0));
 	meshComp->SetCollisionProfileName(TEXT("WeaponPreset"));
-
+	arrowComp = CreateDefaultSubobject<UArrowComponent>(TEXT("arrowComp"));
+	arrowComp->SetupAttachment(RootComponent);
 	//boxComp->SetCollisionProfileName(TEXT("Sword"));
 	//boxComp->SetupAttachment(GetMesh(), TEXT("hand_rSocket"));
 	//boxComp->SetRelativeLocation(FVector(-42, 7, 1));
 	//boxComp->SetRelativeRotation(FRotator(0, 90, 0));
 	//boxComp->SetCollisionProfileName(TEXT("WeaponPreset"));
+
+	//포탈애니메이션
+	ConstructorHelpers::FObjectFinder<UAnimSequence>anim(TEXT("AnimSequence'/Game/VR/Animation/MainCharacter/fine_UE.fine_UE'"));
+	if (anim.Succeeded())
+	{
+	Anim = anim.Object;
+	}
 
 
 }
@@ -82,18 +93,20 @@ void AMainCharacter::OnHitEvent()
 	if (hp <= 0)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Death"));
+
 	}
 }
 
 void AMainCharacter::InputAttack()
 {
 	auto anim = Cast<UMainCharacterAnim>(GetMesh()->GetAnimInstance());
-	
-	bool ismontageplaying = anim->IsAnyMontagePlaying();
-	if(ismontageplaying==false)
-	{
-		anim->PlayAttackAnim();
-	
+	if (anim) {
+		bool isMontagePlaying = anim->IsAnyMontagePlaying();
+		if (isMontagePlaying == false)
+		{
+			anim->PlayAttackAnim();
+
+		}
 	}
 	
 	//UE_LOG(LogTemp, Warning, TEXT("attack"));
@@ -126,5 +139,21 @@ void AMainCharacter::InputAttack()
 		auto enemyFSM = Cast<UEnemyFSM>(enemy);
 		enemyFSM->OnDamageProcess();
 	}
+
+}
+
+//포탈애니메이션
+void AMainCharacter::PlayAnim()
+{
+	if(!GetMesh() || !Anim) return;
+	bool bLoop = false;
+
+	GetMesh()->PlayAnimation(Anim, bLoop);
+	
+}
+
+void AMainCharacter::InputMagic()
+{
+	GetWorld()->SpawnActor<AMagic>(magicFactory,arrowComp->GetComponentLocation(), arrowComp->GetComponentRotation());
 
 }

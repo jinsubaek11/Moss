@@ -49,8 +49,12 @@ public:
 	UPROPERTY()
 	class APlayerController* playerController;
 
+	UPROPERTY()
+	class APotal* potal;
+
 	void Jumping();
 	void Attack();
 	void Running();
 	void StopRunning();
+	void Magical();
 };

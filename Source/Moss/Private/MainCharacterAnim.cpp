@@ -35,3 +35,5 @@ void UMainCharacterAnim::PlayAttackAnim()
 {
 	Montage_Play(attackAnimMontage);
 }
+
+
