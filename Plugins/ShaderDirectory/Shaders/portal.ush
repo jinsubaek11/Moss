@@ -1,0 +1,53 @@
+
+
+struct Functions 
+{
+    float2 SparkCircle(float2 uv, float2 id, float or, float ir, float isActive)
+    {
+        float o = smoothstep(or, or-.01, length(uv) + sin((atan2(uv.y, uv.x) + atan2(id.y, id.x)) * 10.) * .03);
+        float i = smoothstep(ir, ir-.01, length(uv) + sin((atan2(uv.y, uv.x) + atan2(id.y, id.x)) * 10.) * .03);
+        float a = 1.f;
+
+        if (isActive > 0.)
+        {
+            a = lerp(0., .3, step(.1, i));
+        }
+
+        return float2(o - i, a);
+    }
+} f;
+
+float3 purpleOuter = float3(.2, .03, .23);
+float3 purpleInner = float3(.05,.025,.06);
+float3 black = float3(0.,0.,0.);
+float4 fragColor = float4(black, .5);
+
+uv = uv * 2. - 1.;
+
+float2 id = floor(uv * sin(time * 2. + uv.x * uv.y * 30.)*40.+40.);
+float t = time * 1.5;
+
+view = normalize(view);
+normal = normalize(normal);
+
+float2 sparkCircle = f.SparkCircle(uv, id, t+.1 - 3., t - 3., isActive);
+fragColor.rgb += sparkCircle.x * purpleOuter;
+
+if (sparkCircle.y > 0.)
+{
+    fragColor.rgb += purpleInner;
+    fragColor.a = sparkCircle.y;
+}
+
+float fresnelFactor = lerp(2., 1., sin(time)*.5+.5);
+float3 fresnel = pow((1. - clamp(dot(view, normal), 0., 1.)), fresnelFactor);
+float effectFactor = lerp(.1, .5, sin(time)*.5+.5);
+float effectAlpha = exp(-.1 * max(0., (sceneDepth.a - pixelDepth) * effectFactor));
+
+//fragColor.rgb += effectAlpha * purpleOuter;
+//fragColor.rgb += fresnel * purpleOuter;
+
+fragColor.rgb += t > 4. ? effectAlpha * purpleOuter : 0.;
+fragColor.rgb += t > 4. ? fresnel * purpleOuter : 0.;
+
+return fragColor;
