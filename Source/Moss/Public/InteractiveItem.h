@@ -44,4 +44,5 @@ protected:
 	
 	bool isReadyToInteract = false;
 	EItemType type;
+
 };
