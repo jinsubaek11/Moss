@@ -31,15 +31,13 @@ public:
 	//재생할 공격 애니메이션 몽타주
 	UPROPERTY(EditDefaultsOnly, Category=PlayerAnim)
 	class UAnimMontage* attackAnimMontage;
-
-	UPROPERTY(EditDefaultsOnly, Category=PlayerAnim)
-	class UAnimMontage* magicMontage;
+	UPROPERTY(EditDefaultsOnly, Category = PlayerAnim)
+	class UAnimMontage* finishAnimMontage;
 
 	//공격 애니메이션 재생함수
 	void PlayAttackAnim();
-	void PlayMagicAnim();
-	
-	
+	void PlayFinishAnim();
 
-
+	UFUNCTION()
+	void AnimNotify_FinishEnd();
 };

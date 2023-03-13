@@ -4,6 +4,8 @@
 #include "MainCharacterAnim.h"
 #include "Maincharacter.h"
 #include <GameFramework/CharacterMovementComponent.h>
+#include "Kismet/GameplayStatics.h"
+#include "Potal.h"
 
 
 void UMainCharacterAnim::NativeUpdateAnimation(float DeltaSeconds)
@@ -35,9 +37,25 @@ void UMainCharacterAnim::PlayAttackAnim()
 	Montage_Play(attackAnimMontage);
 }
 
-void UMainCharacterAnim::PlayMagicAnim()
+void UMainCharacterAnim::PlayFinishAnim()
 {
-	Montage_Play(magicMontage);
+	Montage_Play(finishAnimMontage);
 }
 
+void UMainCharacterAnim::AnimNotify_FinishEnd()
+{
+	APotal* portal = Cast<APotal>(UGameplayStatics::GetActorOfClass(GetWorld(), APotal::StaticClass()));
+	if (portal)
+	{
+		portal->PlayGateAnimation();
+		portal->isPlayEndingAnimation = false;
+		//FTimerHandle timer;
+		//FTimerDelegate timerDelegate;
+		//timerDelegate.BindLambda([&]() -> void {
+		//	portal->isPlayEndingAnimation = false;
+		//});
+
+		//GetWorld()->GetTimerManager().SetTimer(timer, timerDelegate, 0.5, false);
+	}
+}
 

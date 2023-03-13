@@ -3,11 +3,11 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/Actor.h"
+#include "InteractiveItem.h"
 #include "Potal.generated.h"
 
 UCLASS()
-class MOSS_API APotal : public AActor
+class MOSS_API APotal : public AInteractiveItem
 {
 	GENERATED_BODY()
 	
@@ -23,24 +23,33 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-
-	UPROPERTY(EditAnywhere)
-	class UBoxComponent* doorway;
-	
-	UPROPERTY(EditAnywhere)
-	class UStaticMeshComponent* doorComp;
-
+private:
 	UFUNCTION()
 	void InPortal(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
-
 	UFUNCTION()
 	void OutPortal(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 	
+public:
+	void PlayGateAnimation();
+
+public:
+	UPROPERTY(EditAnywhere)
+	class UStaticMeshComponent* doorComp;
+	UPROPERTY(EditAnywhere)
+	class UStaticMeshComponent* gatewayOuterComp;
+	UPROPERTY(EditAnywhere)
+	class UStaticMeshComponent* gatewayInnerComp;
 	UPROPERTY()
 	class AMainCharacter* mainCharacter;
-
 	UPROPERTY()
 	class UMainCharacterAnim* mainCharacterAnim;
-
+	
 	bool isPlayEndingAnimation = false;
+	bool isOpenPortal = false;
+	
+	FTimerHandle gateAnimationTimer;
+	bool isPlayGateAnimation = false;
+	int gateAnimationCount = 0;
+	int maxGateAnimationCount = 60;
+
 };
