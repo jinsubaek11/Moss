@@ -55,4 +55,6 @@ public:
 	TSubclassOf<class AMagic> magicFactory;
 
 	class UArrowComponent* arrowComp;
+
+
 };

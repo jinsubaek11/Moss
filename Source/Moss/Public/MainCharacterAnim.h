@@ -32,8 +32,14 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category=PlayerAnim)
 	class UAnimMontage* attackAnimMontage;
 
+	UPROPERTY(EditDefaultsOnly, Category=PlayerAnim)
+	class UAnimMontage* magicMontage;
+
 	//공격 애니메이션 재생함수
 	void PlayAttackAnim();
-
+	void PlayMagicAnim();
 	
+	
+
+
 };

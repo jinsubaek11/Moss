@@ -82,6 +82,10 @@ void AFirstLevelPlayer::Move(const FInputActionValue& Values)
 {
 	FVector2D axis = Values.Get<FVector2D>();
 
+	if(!potal)
+	{
+		return;
+	}
 	if (potal->isPlayEndingAnimation)
 	{
 		mainCharacter->AddMovementInput(FVector(0, 0, 0), axis.X);
@@ -168,5 +172,12 @@ void AFirstLevelPlayer::StopRunning()
 
 void AFirstLevelPlayer::Magical()
 {
+	if (potal->isPlayEndingAnimation)
+	{
+		return;
+	}
+	else
+	{
 	mainCharacter->InputMagic();
+	}
 }

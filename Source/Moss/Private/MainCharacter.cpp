@@ -156,4 +156,13 @@ void AMainCharacter::InputMagic()
 {
 	GetWorld()->SpawnActor<AMagic>(magicFactory,arrowComp->GetComponentLocation(), arrowComp->GetComponentRotation());
 
+	auto anim = Cast<UMainCharacterAnim>(GetMesh()->GetAnimInstance());
+	if (anim) {
+		bool isMontagePlaying = anim->IsAnyMontagePlaying();
+		if (isMontagePlaying == false)
+		{
+			anim->PlayMagicAnim();
+
+		}
+	}
 }

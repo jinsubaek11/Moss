@@ -28,12 +28,16 @@ void UMainCharacterAnim::NativeUpdateAnimation(float DeltaSeconds)
 		auto movement = player->GetCharacterMovement();
 		isInAir = movement->IsFalling();
 	}
-
 }
 
 void UMainCharacterAnim::PlayAttackAnim()
 {
 	Montage_Play(attackAnimMontage);
+}
+
+void UMainCharacterAnim::PlayMagicAnim()
+{
+	Montage_Play(magicMontage);
 }
 
 
