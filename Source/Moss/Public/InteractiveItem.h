@@ -25,10 +25,11 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 public:
-	virtual void Interact(
-		FVector2D mouseStart = FVector2D(0),
-		FVector2D mouseEnd = FVector2D(0)) {};	
-	void SetIsActive(bool value);
+	virtual void BeforeInteract() {};
+	virtual void Interact(FVector start = FVector(0), FVector end = FVector(0)) {};	
+	virtual void AfterInteract() {};
+	
+	void SetIsReadyToInteract(bool value);
 	EItemType GetType() const;
 
 protected:
@@ -36,7 +37,11 @@ protected:
 	class UBoxComponent* boxComp;
 	UPROPERTY(EditDefaultsOnly, category = "item")
 	class UStaticMeshComponent* meshComp;
-
-	bool isActive = false;
+	UPROPERTY()
+	class UMaterialInterface* originalMat;
+	UPROPERTY()
+	class UMaterialInstanceDynamic* dynamicMat;
+	
+	bool isReadyToInteract = false;
 	EItemType type;
 };
