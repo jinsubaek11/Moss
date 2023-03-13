@@ -19,9 +19,20 @@ AHelper::AHelper()
 	SetRootComponent(sphereComp);
 
 	coreMeshComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Core Mesh Component"));
+	ConstructorHelpers::FObjectFinder<UMaterialInterface> coreMat(TEXT("/Script/Engine.Material'/Game/VR/Material/M_HelperCore.M_HelperCore'"));
+	if (coreMat.Succeeded())
+	{
+		coreMeshComp->SetMaterial(0, coreMat.Object);
+	}
 	coreMeshComp->SetupAttachment(RootComponent);
 
 	shieldMeshComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Shield Mesh Component"));
+	ConstructorHelpers::FObjectFinder<UMaterialInterface> shieldMat(TEXT("/Script/Engine.Material'/Game/VR/Material/M_Shield.M_Shield'"));
+	if (shieldMat.Succeeded())
+	{
+		originalShieldMaterial = shieldMat.Object;
+		shieldMeshComp->SetMaterial(0, shieldMat.Object);
+	}
 	shieldMeshComp->SetupAttachment(RootComponent);
 
 	lineComp = CreateDefaultSubobject<UNiagaraComponent>(TEXT("LineComp"));
@@ -47,6 +58,12 @@ void AHelper::BeginPlay()
 
 	sphereComp->OnComponentBeginOverlap.AddDynamic(this, &AHelper::OnBeginOverlap);
 	sphereComp->OnComponentEndOverlap.AddDynamic(this, &AHelper::OnEndOverlap);
+
+	dynamicShieldMaterial = UMaterialInstanceDynamic::Create(originalShieldMaterial, this);
+	for (int i = 0; i < shieldMeshComp->GetMaterials().Num(); i++)
+	{
+		shieldMeshComp->SetMaterial(i, dynamicShieldMaterial);
+	}
 }
 
 void AHelper::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, 
@@ -57,7 +74,7 @@ void AHelper::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* O
 	if (item)
 	{
 		currentItem = item;
-		isOverlapping = true;
+		isOverlapping = true;		
 	}
 }
 
@@ -83,7 +100,6 @@ void AHelper::Tick(float DeltaTime)
 	if (isOverlapping)
 	{
 		overlappingTime += DeltaTime;
-		UE_LOG(LogTemp, Warning, TEXT("isOverlapping"));
 
 		if (overlappingTime >= 1.f && !isReadyToInteract)
 		{
@@ -92,8 +108,32 @@ void AHelper::Tick(float DeltaTime)
 		}
 	}
 
+	//UE_LOG(LogTemp, Warning, TEXT("%d, %d"), isInteractToItem, isReadyToInteract);
+	if (isInteractToItem && isReadyToInteract)
+	{
+		InteractToItem();
+
+		isInteractToItem = false;
+		isReadyToInteract = false;		
+		isScaling = false;
+		currentItem->SetIsReadyToInteract(false);
+		dynamicShieldMaterial->SetScalarParameterValue(TEXT("IsSmall"), 0);
+		dynamicShieldMaterial->SetScalarParameterValue(TEXT("FresnelExp"), defaultFresnelExp);
+	}
+	
+	if (isInteractToItem)
+	{
+		isInteractToItem = false;
+	}
+
 	if (isReadyToInteract)
 	{
+		dynamicShieldMaterial->SetScalarParameterValue(TEXT("IsSmall"), 1);
+		dynamicShieldMaterial->SetScalarParameterValue(TEXT("FresnelExp"), modifiedFresnelExp);
+		SetShieldScaleSmall(true);
+		currentItem->SetIsReadyToInteract(true);
+		//UE_LOG(LogTemp, Warning, TEXT("sdfsdf"));
+
 		TArray<FVector> tracePoints = GetPlayerViewTracePoint(collisionRange);
 		FHitResult hitResult;
 		FCollisionQueryParams params;
@@ -102,13 +142,17 @@ void AHelper::Tick(float DeltaTime)
 
 		bool isHit = GetWorld()->LineTraceSingleByChannel(
 			hitResult, tracePoints[0], tracePoints[1], ECollisionChannel::ECC_Visibility, params);
-		UE_LOG(LogTemp, Warning, TEXT("isReadyToInteract"));
 
 		if (isHit)
 		{
-			UE_LOG(LogTemp, Warning, TEXT("ddddd"));
 			FVector corePos = hitResult.Location;
 			corePos.Z = stopPos.Z;
+
+			float dist = FVector::Dist(corePos, stopPos);
+			if (dist > maxDist)
+			{
+				corePos = stopPos + (corePos - stopPos).GetSafeNormal() * maxDist;
+			}
 
 			coreMeshComp->SetWorldLocation(corePos);
 			SetActorLocation(stopPos);
@@ -117,8 +161,12 @@ void AHelper::Tick(float DeltaTime)
 
 			DrawDistanceLine(stopPos, corePos);
 
+			interactStartPos = stopPos;
+			interactEndPos = corePos;
+
 			if (lineComp)
 			{
+				//coreMeshComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 				lineComp->SetVisibility(true);
 				UNiagaraDataInterfaceArrayFunctionLibrary::SetNiagaraArrayVector(lineComp, FName(TEXT("User.PointArray")), Lines);
 			}
@@ -128,17 +176,11 @@ void AHelper::Tick(float DeltaTime)
 	}
 	else
 	{
+		//coreMeshComp->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 		coreMeshComp->SetWorldLocation(GetActorLocation());
+		SetShieldScaleSmall(false);
 		lineComp->SetVisibility(false);
 		ClearLine();
-	}
-
-	
-	if (isInteractToItem && isReadyToInteract)
-	{
-		isInteractToItem = false;
-		isReadyToInteract = false;
-		InteractToItem();
 	}
 
 	if (isActivate)
@@ -274,7 +316,7 @@ void AHelper::InteractToItem()
 	switch (currentItem->GetType())
 	{
 	case EItemType::BOX:
-		currentItem->Interact(mouseStart, mouseEnd);
+		currentItem->Interact(interactStartPos, interactEndPos);
 		break;
 	}
 }
@@ -308,17 +350,6 @@ void AHelper::SetIsForwardMove(bool value)
 	isForwardMove = value;
 }
 
-void AHelper::SetMousePos(FVector2D pos, EMouseType type)
-{
-	if (type == EMouseType::START)
-	{
-		mouseStart = pos;
-		return;
-	}
-
-	mouseEnd = pos;
-}
-
 void AHelper::SetIsReadyToInteract(bool value)
 {
 	isReadyToInteract = value;	
@@ -338,4 +369,35 @@ void AHelper::DrawDistanceLine(FVector& start, FVector& end)
 		FVector pos = FMath::Lerp<FVector>(start, end, i / (float)LineSmooth);
 		Lines.Add(pos);
 	}
+}
+
+void AHelper::SetShieldScaleSmall(bool isSmall)
+{
+	if (!isSmall)
+	{
+		shieldMeshComp->SetRelativeScale3D(FVector(defaultScale));
+		return;
+	}
+
+	if (isScaling) return;
+
+	isScaling = true;
+
+	FTimerDelegate timerDelegate;
+	timerDelegate.BindLambda([this]()->void {
+		if (scaleTime >= scaleCoolTime)
+		{
+			scaleTime = 0.f;
+			GetWorld()->GetTimerManager().ClearTimer(scaleTimer);
+
+			return;
+		}
+		scaleTime += GetWorld()->GetDeltaSeconds();
+
+		float curScale = FMath::Lerp<float>(defaultScale, 0.5, scaleTime / scaleCoolTime);
+
+		shieldMeshComp->SetRelativeScale3D(FVector(curScale));
+	});
+
+	GetWorld()->GetTimerManager().SetTimer(scaleTimer, timerDelegate, 0.02, true);
 }
