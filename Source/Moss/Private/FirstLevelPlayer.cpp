@@ -82,6 +82,7 @@ void AFirstLevelPlayer::Move(const FInputActionValue& Values)
 {
 	FVector2D axis = Values.Get<FVector2D>();
 
+	//UE_LOG(LogTemp, Warning, TEXT("%d"), potal->isPlayEndingAnimation);
 	if (potal->isPlayEndingAnimation)
 	{
 		mainCharacter->AddMovementInput(FVector(0, 0, 0), axis.X);

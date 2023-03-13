@@ -43,7 +43,7 @@ AMainCharacter::AMainCharacter()
 	ConstructorHelpers::FObjectFinder<UAnimSequence>anim(TEXT("AnimSequence'/Game/VR/Animation/MainCharacter/fine_UE.fine_UE'"));
 	if (anim.Succeeded())
 	{
-	Anim = anim.Object;
+		Anim = anim.Object;
 	}
 
 
@@ -145,11 +145,14 @@ void AMainCharacter::InputAttack()
 //포탈애니메이션
 void AMainCharacter::PlayAnim()
 {
-	if(!GetMesh() || !Anim) return;
-	bool bLoop = false;
-
-	GetMesh()->PlayAnimation(Anim, bLoop);
-	
+	auto anim = Cast<UMainCharacterAnim>(GetMesh()->GetAnimInstance());
+	if (anim) {
+		bool isMontagePlaying = anim->IsAnyMontagePlaying();
+		if (isMontagePlaying == false)
+		{
+			anim->PlayFinishAnim();
+		}
+	}
 }
 
 void AMainCharacter::InputMagic()
