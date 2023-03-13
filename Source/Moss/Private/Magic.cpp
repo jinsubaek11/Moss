@@ -40,13 +40,12 @@ void AMagic::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	SetActorLocation(GetActorLocation() + GetActorForwardVector().RotateAngleAxis(0, FVector(1, 0, 0)).GetSafeNormal() * moveSpeed * DeltaTime);
+	SetActorLocation(GetActorLocation() + GetActorForwardVector() * moveSpeed * DeltaTime);
 	
 
 	currentTime += DeltaTime;
-	if (currentTime >= 30)
+	if (currentTime >= 10)
 	{
-		UE_LOG(LogTemp,Warning,TEXT("Ddd"));
 		Destroy();
 	}
 

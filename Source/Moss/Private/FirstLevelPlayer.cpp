@@ -168,6 +168,5 @@ void AFirstLevelPlayer::StopRunning()
 
 void AFirstLevelPlayer::Magical()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Bang!"));
 	mainCharacter->InputMagic();
 }

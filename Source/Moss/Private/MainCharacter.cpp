@@ -7,6 +7,7 @@
 #include "Magic.h"
 #include "Components/CapsuleComponent.h"
 #include <Animation/AnimMontage.h>
+#include <Components/ArrowComponent.h>
 
 AMainCharacter::AMainCharacter()
 {
@@ -25,12 +26,13 @@ AMainCharacter::AMainCharacter()
 	//무기넣고싶음
 	//boxComp = CreateDefaultSubobject<UBoxComponent>(TEXT("boxComp"));
 	//boxComp->SetupAttachment(GetMesh());
-	meshComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("meshComp"));;
+	meshComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("meshComp"));
 	meshComp->SetupAttachment(GetMesh(), TEXT("hand_rSocket"));
 	meshComp->SetRelativeLocation(FVector(-42, 7, 1));
 	meshComp->SetRelativeRotation(FRotator(0, 90, 0));
 	meshComp->SetCollisionProfileName(TEXT("WeaponPreset"));
-
+	arrowComp = CreateDefaultSubobject<UArrowComponent>(TEXT("arrowComp"));
+	arrowComp->SetupAttachment(RootComponent);
 	//boxComp->SetCollisionProfileName(TEXT("Sword"));
 	//boxComp->SetupAttachment(GetMesh(), TEXT("hand_rSocket"));
 	//boxComp->SetRelativeLocation(FVector(-42, 7, 1));
@@ -91,6 +93,7 @@ void AMainCharacter::OnHitEvent()
 	if (hp <= 0)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Death"));
+
 	}
 }
 
@@ -151,6 +154,6 @@ void AMainCharacter::PlayAnim()
 
 void AMainCharacter::InputMagic()
 {
-	UE_LOG(LogTemp, Warning, TEXT("BangBang"));
-	GetWorld()->SpawnActor<AMagic>(magicFactory);
+	GetWorld()->SpawnActor<AMagic>(magicFactory,arrowComp->GetComponentLocation(), arrowComp->GetComponentRotation());
+
 }

@@ -54,5 +54,5 @@ public:
 	UPROPERTY(EditAnywhere,Category=magic)
 	TSubclassOf<class AMagic> magicFactory;
 
-
+	class UArrowComponent* arrowComp;
 };
