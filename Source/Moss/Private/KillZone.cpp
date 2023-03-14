@@ -2,6 +2,8 @@
 
 
 #include "KillZone.h"
+#include "MainCharacter.h"
+#include "Kismet/GameplayStatics.h"
 #include <Components/BoxComponent.h>
 
 // Sets default values
@@ -23,6 +25,7 @@ void AKillZone::BeginPlay()
 	Super::BeginPlay();
 	
 	 killBox->OnComponentBeginOverlap.AddDynamic(this, &AKillZone::InKillZone);
+	 mainCharacter = Cast<AMainCharacter>(UGameplayStatics::GetActorOfClass(GetWorld(), AMainCharacter::StaticClass()));
 
 }
 
@@ -35,7 +38,12 @@ void AKillZone::Tick(float DeltaTime)
 
 void AKillZone::InKillZone(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-
+	UE_LOG(LogTemp, Warning, TEXT("dead"));
+	mainCharacter->hp = 0;
+	if (mainCharacter->isDead)
+	{
+		UGameplayStatics::OpenLevel(this, TEXT("Three"));
+	}
 }
 
 

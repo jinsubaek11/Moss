@@ -92,7 +92,7 @@ void AMainCharacter::OnHitEvent()
 	if (hp <= 0)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Death"));
-
+		isDead;
 	}
 }
 
