@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Animation/AnimInstance.h"git 
+#include "Animation/AnimInstance.h"
 #include "MainCharacterAnim.generated.h"
 
 /**
