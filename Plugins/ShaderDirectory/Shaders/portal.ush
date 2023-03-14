@@ -70,17 +70,25 @@ float3 fresnel = pow((1. - clamp(dot(view, normal), 0., 1.)), 2.);
 float effectFactor = lerp(.1, .5, sin(time)*.5+.5);
 float effectAlpha = exp(-.1 * max(0., (sceneDepth.a - pixelDepth) * .1));
 
-//fragColor.rgb += radius <= 0.05 ? effectAlpha * purpleOuter : 0.;
-//fragColor.rgb += radius <= 0.05 ? fresnel * purpleOuter : 0.;
+if (isActive >= 1.)
+{
+    fragColor.rgb += lerp(effectAlpha * purpleOuter, 0., radius / 1.5);
+    fragColor.rgb += lerp(fresnel * purpleOuter,  0., radius / 1.5);
+}
+
 
 //float4 tex = Texture2DSample(Tex, TexSampler, uv*.5+.5);
 //fragColor = tex;
 //float3 col = Texture2DSample(Tex, TexSampler, rip).xyz;
 //fragColor = float4(col,1.0);
 
-float2 flip_uv = f.flipbook(uv*.5+.5, float2(8.0, 8.0), time * 40.);
-float4 flip_texture = Texture2DSample(Tex, TexSampler, flip_uv);
-fragColor = flip_texture;
+// if ()
+// {
+// float2 flip_uv = f.flipbook(uv*.5+.5, float2(8.0, 8.0), time * 40.);
+// float4 flip_texture = Texture2DSample(Tex, TexSampler, flip_uv);
+// fragColor = flip_texture;
+// }
+
 
 return fragColor;
 
