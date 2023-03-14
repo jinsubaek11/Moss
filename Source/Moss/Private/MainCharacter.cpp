@@ -45,8 +45,6 @@ AMainCharacter::AMainCharacter()
 	{
 		Anim = anim.Object;
 	}
-
-
 }
 
 void AMainCharacter::BeginPlay()
@@ -54,6 +52,7 @@ void AMainCharacter::BeginPlay()
 	Super::BeginPlay();
 
 	hp = initialHp;
+
 
 }
 
@@ -157,6 +156,17 @@ void AMainCharacter::PlayAnim()
 
 void AMainCharacter::InputMagic()
 {
-	GetWorld()->SpawnActor<AMagic>(magicFactory,arrowComp->GetComponentLocation(), arrowComp->GetComponentRotation());
+	auto anim = Cast<UMainCharacterAnim>(GetMesh()->GetAnimInstance());
+	if (anim) {
+		bool isMontagePlaying = anim->IsAnyMontagePlaying();
+		if (isMontagePlaying == false)
+		{
+			anim->PlayMagicAnim();
+			if (anim->isMagicEnd)
+			{
+				GetWorld()->SpawnActor<AMagic>(magicFactory, arrowComp->GetComponentLocation(), arrowComp->GetComponentRotation());
+			}
 
+		}
+	}
 }

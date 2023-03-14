@@ -33,6 +33,7 @@ void AMagic::BeginPlay()
 	enemyFSM = Cast<UEnemyFSM>(UGameplayStatics::GetActorOfClass(GetWorld(), UEnemyFSM::StaticClass()));
 
 	magicBoxComp->OnComponentBeginOverlap.AddDynamic(this, &AMagic::OverlapMagic);
+
 }
 
 // Called every frame
