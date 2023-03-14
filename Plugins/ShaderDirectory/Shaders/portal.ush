@@ -2,44 +2,67 @@
 
 struct Functions 
 {
+    float2x2 Rot(float a)
+    {
+        float s = sin(a), c = cos(a);
+        return float2x2(c, -s, s, c);
+    }
+
     float2 SparkCircle(float2 uv, float2 id, float or, float ir, float isActive)
     {
         if (isActive <= 0.) return 0.;
 
-        float o = smoothstep(or, or-.01, length(uv) + sin((atan2(uv.y, uv.x) + atan2(id.y, id.x)) * 10.) * .03);
-        float i = smoothstep(ir, ir-.01, length(uv) + sin((atan2(uv.y, uv.x) + atan2(id.y, id.x)) * 10.) * .03);
-        float a = lerp(0., .3, step(.1, i));
-        // float a = 0.;
-
-        // if (isActive > 0.)
-        // {
-        //     a = lerp(0., .3, step(.1, i));
-        // }
+        float o = smoothstep(or, or-.01, length(uv) + sin((atan2(uv.y, uv.x) + atan2(id.y, id.x)) * 10.) * .05);
+        float i = smoothstep(ir, ir-.01, length(uv) + sin((atan2(uv.y, uv.x) + atan2(id.y, id.x)) * 10.) * .05);
+        float a = lerp(0., 1., step(.1, i));
 
         return float2(o - i, a);
     }
+
+    float2 flipbook(float2 uv, float2 size, float progress)
+    {
+        progress = floor( Mod(progress, (size.x * size.y)) );
+        float2 frame_size = float2(1.0, 1.0) / float2(size.x, size.y);
+        float2 frame = frac(uv / size) + frame_size;
+            
+        frame.x += ( (progress / size.x) - frame_size.x * floor(progress/size.x) * size.x ) - frame_size.x;
+        frame.y += (frame_size.y * floor(progress/size.x) ) - frame_size.y ;
+            
+        return frame;
+    }
 } f;
 
-float3 purpleOuter = float3(.2, .03, .23);
-float3 purpleInner = float3(.1,.025,.12);
+float3 purpleOuter = float3(.23, .03, .23);
+float3 purpleInner = float3(.03,.0,.032);
 float3 black = float3(0.,0.,0.);
 float4 fragColor = float4(black, .5);
+
+float2 cPos = -1.0 + 2.0 * uv;
+float cLength = length(uv);
+float2 rip = uv+(cPos/cLength)*cos(cLength*12.0-time*4.0)*0.03;
+//vec3 col = texture2D(tex,uv).xyz;
 
 uv = uv * 2. - 1.;
 
 float2 id = floor(uv * sin(time * 2. + uv.x * uv.y * 30.)*40.+40.);
-float t = time * 1.5;
+float t = time * 3.;
+
+//uv = mul(uv, f.Rot(t));
 
 view = normalize(view);
 normal = normalize(normal);
 
-float2 sparkCircle = f.SparkCircle(uv, id, radius, radius - .05, isActive);
+float2 sparkCircle = f.SparkCircle(uv, id, radius + .05, radius, isActive);
 fragColor.rgb += sparkCircle.x * purpleOuter;
 
-if (sparkCircle.y > 0.)
+if (sparkCircle.y >= 1.)
 {
-    fragColor.rgb += purpleInner;
+    fragColor.rgb = black;
     fragColor.a = sparkCircle.y;
+}
+else
+{
+    fragColor.rgb = isActive >= 1. ? purpleInner : black;
 }
 
 float fresnelFactor = lerp(2., 1., sin(time)*.5+.5);
@@ -47,7 +70,17 @@ float3 fresnel = pow((1. - clamp(dot(view, normal), 0., 1.)), 2.);
 float effectFactor = lerp(.1, .5, sin(time)*.5+.5);
 float effectAlpha = exp(-.1 * max(0., (sceneDepth.a - pixelDepth) * .1));
 
-fragColor.rgb += radius >= 1.5 ? effectAlpha * purpleOuter : 0.;
-fragColor.rgb += radius >= 1.5 ? fresnel * purpleOuter : 0.;
+//fragColor.rgb += radius <= 0.05 ? effectAlpha * purpleOuter : 0.;
+//fragColor.rgb += radius <= 0.05 ? fresnel * purpleOuter : 0.;
+
+//float4 tex = Texture2DSample(Tex, TexSampler, uv*.5+.5);
+//fragColor = tex;
+//float3 col = Texture2DSample(Tex, TexSampler, rip).xyz;
+//fragColor = float4(col,1.0);
+
+float2 flip_uv = f.flipbook(uv*.5+.5, float2(8.0, 8.0), time * 40.);
+float4 flip_texture = Texture2DSample(Tex, TexSampler, flip_uv);
+fragColor = flip_texture;
 
 return fragColor;
+

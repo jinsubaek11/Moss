@@ -8,6 +8,8 @@
 #include "NiagaraComponent.h"
 #include "NiagaraSystem.h"
 #include "NiagaraDataInterfaceArrayFunctionLibrary.h"
+#include <HeadMountedDisplayFunctionLibrary.h>
+#include <MotionControllerComponent.h>
 
 
 AHelper::AHelper()
@@ -336,8 +338,20 @@ TArray<FVector> AHelper::GetPlayerViewTracePoint(float scale) const
 	if (!player) return TArray<FVector>{ FVector::ZeroVector };
 
 	FVector start;
+	FVector end;
 	FRotator rotation;
-	player->GetController()->GetPlayerViewPoint(start, rotation);
+
+	if (UHeadMountedDisplayFunctionLibrary::IsHeadMountedDisplayEnabled())
+	{
+		start = player->RightHand->GetComponentLocation();
+		end = start + player->RightHand->GetForwardVector() * scale;
+		return TArray<FVector>{ start, end };
+	}
+	else
+	{
+		player->GetController()->GetPlayerViewPoint(start, rotation);
+	}
+
 
 	return TArray<FVector>{ start, start + rotation.Vector() * scale };
 }
