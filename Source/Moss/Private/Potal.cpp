@@ -99,10 +99,8 @@ void APotal::PlayGateAnimation()
 			return;
 		}
 
-		float r = FMath::Lerp<float>(0., 1.5, gateAnimationCount/(float)maxGateAnimationCount);
+		float r = FMath::Lerp<float>(1.5, 0., gateAnimationCount/(float)maxGateAnimationCount);
 		dynamicMat->SetScalarParameterValue(TEXT("Radius"), r);
-
-		//UE_LOG(LogTemp, Warning, TEXT("%f"), r);
 	});
 
 	GetWorld()->GetTimerManager().SetTimer(gateAnimationTimer, timerDelegate, .01, true);

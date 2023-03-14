@@ -7,6 +7,10 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Helper.h"
 #include "Potal.h"
+#include <HeadMountedDisplayFunctionLibrary.h>
+#include <MotionControllerComponent.h>
+#include <Camera/CameraComponent.h>
+#include "Components/SceneComponent.h"
 
 
 
@@ -14,6 +18,42 @@ AFirstLevelPlayer::AFirstLevelPlayer()
 {
 	PrimaryActorTick.bCanEverTick = true;
 
+	rootComp = CreateDefaultSubobject<USceneComponent>(TEXT("Scene Comp"));
+	SetRootComponent(rootComp);
+
+	VRCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("VRCamera"));
+	VRCamera->SetupAttachment(RootComponent);
+	VRCamera->bUsePawnControlRotation = false;
+
+	LeftHand = CreateDefaultSubobject<UMotionControllerComponent>(TEXT("LeftHand"));
+	LeftHand->SetupAttachment(RootComponent);
+	LeftHand->SetTrackingMotionSource(FName("Left"));
+
+	RightHand = CreateDefaultSubobject<UMotionControllerComponent>(TEXT("RightHand"));
+	RightHand->SetupAttachment(RootComponent);
+	RightHand->SetTrackingMotionSource(FName("Right"));
+
+	LeftHandMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("LeftHandMesh"));
+	LeftHandMesh->SetupAttachment(LeftHand);
+
+	ConstructorHelpers::FObjectFinder<USkeletalMesh> TempMesh(TEXT("/Script/Engine.SkeletalMesh'/Game/Characters/MannequinsXR/Meshes/SKM_MannyXR_left.SKM_MannyXR_left'"));
+	if (TempMesh.Succeeded())
+	{
+		LeftHandMesh->SetSkeletalMesh(TempMesh.Object);
+		LeftHandMesh->SetRelativeLocation(FVector(-2.9f, -3.5f, 4.5f));
+		LeftHandMesh->SetRelativeRotation(FRotator(-25, -180, 90));
+	}
+
+	RightHandMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("RightHandMesh"));
+	RightHandMesh->SetupAttachment(RightHand);
+
+	ConstructorHelpers::FObjectFinder<USkeletalMesh> TempMesh2(TEXT("/Script/Engine.SkeletalMesh'/Game/Characters/MannequinsXR/Meshes/SKM_MannyXR_right.SKM_MannyXR_right'"));
+	if (TempMesh2.Succeeded())
+	{
+		RightHandMesh->SetSkeletalMesh(TempMesh2.Object);
+		RightHandMesh->SetRelativeLocation(FVector(-2.9f, 3.5f, 4.5f));
+		RightHandMesh->SetRelativeRotation(FRotator(25, 0, 90));
+	}
 }
 
 void AFirstLevelPlayer::BeginPlay()
@@ -40,8 +80,18 @@ void AFirstLevelPlayer::BeginPlay()
 	}
 
 	helper = Cast<AHelper>(UGameplayStatics::GetActorOfClass(GetWorld(), AHelper::StaticClass()));
-
 	potal = Cast<APotal>(UGameplayStatics::GetActorOfClass(GetWorld(), APotal::StaticClass()));
+
+	if (UHeadMountedDisplayFunctionLibrary::IsHeadMountedDisplayEnabled() == false)
+	{
+		RightHand->SetVisibility(false);
+		LeftHand->SetVisibility(false);
+		VRCamera->bUsePawnControlRotation = true;
+	}
+	else
+	{
+		UHeadMountedDisplayFunctionLibrary::SetTrackingOrigin(EHMDTrackingOrigin::Eye);
+	}
 }
 
 void AFirstLevelPlayer::Tick(float DeltaTime)
@@ -98,8 +148,9 @@ void AFirstLevelPlayer::Move(const FInputActionValue& Values)
 		mainCharacter->AddMovementInput(FVector(0, 1, 0), axis.Y);
 
 	}
-
 }
+
+
 
 void AFirstLevelPlayer::SetHelperActivate(const FInputActionValue& Values)
 {

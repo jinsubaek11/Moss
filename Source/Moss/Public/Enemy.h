@@ -6,32 +6,36 @@
 #include "GameFramework/Character.h"
 #include "Enemy.generated.h"
 
-
-
-
 UCLASS()
 class MOSS_API AEnemy : public ACharacter
 {
-	GENERATED_BODY()
+    GENERATED_BODY()
 
 public:
-	// Sets default values for this character's properties
-	AEnemy();
+    // Sets default values for this character's properties
+    AEnemy();
 
 protected:
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
+    // Called when the game starts or when spawned
+    virtual void BeginPlay() override;
 
 public:
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
+    // Called every frame
+    virtual void Tick(float DeltaTime) override;
 
-	// Called to bind functionality to input
-	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+    // Called to bind functionality to input
+    virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
-	// 적 AI 관리 컴포넌트 클래스
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = FSMComponent)
-		class UEnemyFSM* fsm;
+    // 적 AI 관리 컴포넌트 클래스
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = FSMComponent)
+        class UEnemyFSM* fsm;
+    // 총 스켈레탈메시
+    UPROPERTY(EditAnywhere, Category = GunMesh)
+        class USkeletalMeshComponent* gunMeshComp;
 
+    UPROPERTY(EditAnywhere, Category = BulletFactory)
+        TSubclassOf<class ABullet> bulletFactory;
 
+    // 총알발사 처리 함수
+    void RootFire();
 };

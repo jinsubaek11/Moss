@@ -26,6 +26,7 @@ private:
 	void Move(const FInputActionValue& Values);
 	void SetHelperActivate(const FInputActionValue& Values);
 	void SetHelperMove(const FInputActionValue& Values);
+	
 
 public:
 	UPROPERTY()
@@ -41,6 +42,20 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = "Input")
 	class UInputAction* IA_Move;
 
+public:
+	UPROPERTY(VisibleAnywhere, Category = "VRCamera")
+	class USceneComponent* rootComp;
+	UPROPERTY(VisibleAnywhere, Category = "VRCamera")
+	class UCameraComponent* VRCamera;
+	UPROPERTY(VisibleAnywhere, Category = "MotionController")
+	class UMotionControllerComponent* LeftHand;
+	UPROPERTY(VisibleAnywhere, Category = "MotionController")
+	class UMotionControllerComponent* RightHand;
+	UPROPERTY(VisibleAnywhere, Category = "MotionController")
+	class USkeletalMeshComponent* LeftHandMesh;
+	UPROPERTY(VisibleAnywhere, Category = "MotionController")
+	class USkeletalMeshComponent* RightHandMesh;
+	
 	FRotator prevRot;
 	FRotator curRot;
 
