@@ -31,7 +31,7 @@ public:
 	int32 hp;
 	//처음체력
 	UPROPERTY(EditDefaultsOnly)
-	int32 initialHp = 10;
+	int32 initialHp = 1;
 	
 	//점프
 	void InputJump();
@@ -59,4 +59,5 @@ public:
 	class UMainCharacterAnim* mainCharacterAnim;
 
 	bool isDead = true;
+
 };

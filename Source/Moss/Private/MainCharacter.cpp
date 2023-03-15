@@ -7,6 +7,7 @@
 #include "Magic.h"
 #include "Components/CapsuleComponent.h"
 #include <Animation/AnimMontage.h>
+#include "Kismet/GameplayStatics.h"
 #include <Components/ArrowComponent.h>
 
 AMainCharacter::AMainCharacter()
@@ -60,6 +61,7 @@ void AMainCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	
 }
 
 void AMainCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -91,8 +93,29 @@ void AMainCharacter::OnHitEvent()
 	hp--;
 	if (hp <= 0)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Death"));
 		isDead;
+		UE_LOG(LogTemp, Warning, TEXT("Deathsign"));
+
+		auto anim = Cast<UMainCharacterAnim>(GetMesh()->GetAnimInstance());
+		if (anim) {
+			bool isMontagePlaying = anim->IsAnyMontagePlaying();
+			if (isMontagePlaying == false)
+			{
+			UE_LOG(LogTemp,Warning,TEXT("PlayDeathanim"));
+				anim->PlayDeathAnim();
+				/*
+				FTimerHandle deathTimer;
+				FTimerDelegate timeDelegate;
+				timeDelegate.BindLambda([this]() -> void 
+				{
+					UGameplayStatics::OpenLevel(this,TEXT("Three"));
+				});
+
+				GetWorld()->GetTimerManager().SetTimer(deathTimer, timeDelegate, 3, false);
+				*/
+			}
+		}
+		
 	}
 }
 

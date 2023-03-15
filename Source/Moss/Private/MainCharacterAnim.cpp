@@ -45,9 +45,11 @@ void UMainCharacterAnim::PlayFinishAnim()
 void UMainCharacterAnim::PlayMagicAnim()
 {
 	Montage_Play(magicAnimMontage);
-	
+}
 
-
+void UMainCharacterAnim::PlayDeathAnim()
+{
+	Montage_Play(DeathMontage);
 }
 
 void UMainCharacterAnim::AnimNotify_FinishEnd()
@@ -69,6 +71,12 @@ void UMainCharacterAnim::AnimNotify_FinishEnd()
 
 void UMainCharacterAnim::AnimNotify_MagicEnd()
 {
-	UE_LOG(LogTemp,Warning,TEXT("End"));
 	isMagicEnd=true;
+}
+
+void UMainCharacterAnim::AnimNotify_DeathEnd()
+{
+	isDeathEnd = true;
+	UGameplayStatics::OpenLevel(this, TEXT("Three"));
+
 }

@@ -137,7 +137,7 @@ void AFirstLevelPlayer::Move(const FInputActionValue& Values)
 	{
 		return;
 	}
-	if (potal->isPlayEndingAnimation)
+	if (potal->isPlayEndingAnimation )
 	{
 		mainCharacter->AddMovementInput(FVector(0, 0, 0), axis.X);
 		mainCharacter->AddMovementInput(FVector(0, 0, 0), axis.Y);
