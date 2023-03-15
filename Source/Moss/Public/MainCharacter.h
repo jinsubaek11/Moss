@@ -58,4 +58,5 @@ public:
 
 	class UMainCharacterAnim* mainCharacterAnim;
 
+	bool isDead = true;
 };
