@@ -175,7 +175,7 @@ void AFirstLevelPlayer::SetHelperMove(const FInputActionValue& Values)
 	else
 	{
 		//helper->SetMousePos(FVector2D(x, y), EMouseType::END);
-		helper->SetIsInteractToItem(true);
+		helper->SetisInteractToTarget(true);
 
 		FTimerHandle timer;
 		FTimerDelegate timerDelegate;
