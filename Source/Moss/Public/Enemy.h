@@ -30,12 +30,35 @@ public:
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = FSMComponent)
         class UEnemyFSM* fsm;
     // ÃÑ ½ºÄÌ·¹Å»¸Þ½Ã
-    UPROPERTY(EditAnywhere, Category = GunMesh)
-        class USkeletalMeshComponent* gunMeshComp;
+    //UPROPERTY(EditAnywhere, Category=GunMesh)
+    //    class USkeletalMeshComponent* gunMeshComp;
 
     UPROPERTY(EditAnywhere, Category = BulletFactory)
         TSubclassOf<class ABullet> bulletFactory;
 
     // ÃÑ¾Ë¹ß»ç Ã³¸® ÇÔ¼ö
     void RootFire();
+
+    void SetInteract(bool value);
+    void Interact(FVector start, FVector end);
+    bool isInteract;
+
+    void SetHighlight();
+    void BeforeInteract();
+    void AfterInteract();
+    bool isHighlight = false;
+    float defaultBrightness = 0.f;
+    float modifiedBrightness = 1.f;
+    float highlightTime = 0.f;
+    float highlightCoolTime = 0.5f;
+    FTimerHandle highlightTimer;
+    UPROPERTY()
+    class UMaterialInterface* originalWolfMaterial;
+    UPROPERTY()
+    class UMaterialInstanceDynamic* dynamicWolfMaterial;
+
+    // ÃÑ¾Ë ÆÄÆí È¿°ú °øÀå
+	UPROPERTY(EditAnywhere, Category=BulletEffect)
+	class UParticleSystem* bulletEffectFactory;
+
 };

@@ -29,7 +29,7 @@ public:
 public:
 	void SetActivate(bool value);
 	void SetIsForwardMove(bool value);
-	void SetIsInteractToItem(bool value);
+	void SetisInteractToTarget(bool value);
 	void SetIsReadyToInteract(bool value);
 	bool GetIsActivate() const;
 
@@ -40,6 +40,7 @@ private:
 	void ReadyToMove();
 	void BackToMove();
 	void InteractToItem();
+	void InteractToEnemy();
 	void FollowMainCharacter();
 	void ClearLine();
 	void SetShieldScaleSmall(bool isSmall);
@@ -78,7 +79,7 @@ private:
 	bool isBackToMove = false;
 	bool isForwardMove = false;
 	bool isCollide = false;
-	bool isInteractToItem = false;
+	bool isInteractToTarget = false;
 	bool isReadyToInteract = false;
 	bool isOverlapping = false;
 
@@ -89,7 +90,9 @@ private:
 	float moveCoolTime = 0.3f;
 	float overlappingTime = 0.f;
 
-	AInteractiveItem* currentItem;
+	class AActor* interactTarget;
+	//class AInteractiveItem* currentItem;
+	//class AEnemy* currentEnemy;
 
 	FVector interactStartPos;
 	FVector interactEndPos;

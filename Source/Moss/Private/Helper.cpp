@@ -2,6 +2,7 @@
 #include "Components/SphereComponent.h"
 #include "MainCharacter.h"
 #include "FirstLevelPlayer.h"
+#include "Enemy.h"
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "InteractiveItem.h"
@@ -71,15 +72,8 @@ void AHelper::BeginPlay()
 void AHelper::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, 
 	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	AInteractiveItem* item = Cast<AInteractiveItem>(OtherActor);
-	AActor* item2 = Cast<AActor>(item);
-	
-	if (item)
-	{
-	
-		currentItem = item;
-		isOverlapping = true;		
-	}
+	interactTarget = OtherActor;
+	isOverlapping = true;
 }
 
 void AHelper::OnEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, 
@@ -112,31 +106,56 @@ void AHelper::Tick(float DeltaTime)
 		}
 	}
 
-	//UE_LOG(LogTemp, Warning, TEXT("%d, %d"), isInteractToItem, isReadyToInteract);
-	if (isInteractToItem && isReadyToInteract)
+	//UE_LOG(LogTemp, Warning, TEXT("%d, %d"), isInteractToTarget, isReadyToInteract);
+	if (isInteractToTarget && isReadyToInteract)
 	{
-		InteractToItem();
+		AInteractiveItem* item = Cast<AInteractiveItem>(interactTarget);
+		if (item)
+		{
+			InteractToItem();
+			item->SetIsReadyToInteract(false);	
+		}
+		else
+		{
+			AEnemy* enemy = Cast<AEnemy>(interactTarget);
+			if (!enemy) return;
 
-		isInteractToItem = false;
-		isReadyToInteract = false;		
-		isScaling = false;
-		currentItem->SetIsReadyToInteract(false);
+			enemy->RootFire();
+			enemy->isInteract = false;
+		}
+
 		dynamicShieldMaterial->SetScalarParameterValue(TEXT("IsSmall"), 0);
 		dynamicShieldMaterial->SetScalarParameterValue(TEXT("FresnelExp"), defaultFresnelExp);
+		isReadyToInteract = false;
+		isScaling = false;
+		isInteractToTarget = false;
+
 	}
 	
-	if (isInteractToItem)
+	if (isInteractToTarget)
 	{
-		isInteractToItem = false;
+		isInteractToTarget = false;
 	}
 
 	if (isReadyToInteract)
 	{
+		AInteractiveItem* item = Cast<AInteractiveItem>(interactTarget);
+		if (item)
+		{
+			item->SetIsReadyToInteract(true);
+		}
+		else
+		{
+			AEnemy* enemy = Cast<AEnemy>(interactTarget);
+			if (!enemy) return;
+
+			enemy->Interact(interactStartPos, interactEndPos);
+			enemy->isInteract = true;
+		}
+
 		dynamicShieldMaterial->SetScalarParameterValue(TEXT("IsSmall"), 1);
 		dynamicShieldMaterial->SetScalarParameterValue(TEXT("FresnelExp"), modifiedFresnelExp);
 		SetShieldScaleSmall(true);
-		currentItem->SetIsReadyToInteract(true);
-		//UE_LOG(LogTemp, Warning, TEXT("sdfsdf"));
 
 		TArray<FVector> tracePoints = GetPlayerViewTracePoint(collisionRange);
 		FHitResult hitResult;
@@ -269,9 +288,9 @@ void AHelper::ForwardMove()
 	}
 }
 
-void AHelper::SetIsInteractToItem(bool value)
+void AHelper::SetisInteractToTarget(bool value)
 {
-	isInteractToItem = value;
+	isInteractToTarget = value;
 }
 
 void AHelper::MoveLerp()
@@ -317,12 +336,23 @@ void AHelper::BackToMove()
 
 void AHelper::InteractToItem()
 {
-	switch (currentItem->GetType())
+	AInteractiveItem* item = Cast<AInteractiveItem>(interactTarget);
+	if (!item) return;
+
+	switch (item->GetType())
 	{
 	case EItemType::BOX:
-		currentItem->Interact(interactStartPos, interactEndPos);
+		item->Interact(interactStartPos, interactEndPos);
 		break;
 	}
+}
+
+void AHelper::InteractToEnemy()
+{
+	AEnemy* enemy = Cast<AEnemy>(interactTarget);
+	if (!enemy) return;
+
+	enemy->Interact(interactStartPos, interactEndPos);
 }
 
 void AHelper::FollowMainCharacter()

@@ -8,6 +8,7 @@
 #include <Kismet/GameplayStatics.h>
 #include "MainCharacter.h"
 #include <Components/CapsuleComponent.h>
+#include <NavigationSystem.h>
 
 // Sets default values for this component's properties
 UEnemyFSM::UEnemyFSM()
@@ -34,6 +35,9 @@ void UEnemyFSM::BeginPlay()
 
     // UEnemyAnim* 할당
     anim = Cast<UEnemyAnim>(me->GetMesh()->GetAnimInstance());
+
+    // AAIController 할당하기
+    ai=Cast<AAIController>(me->GetController());
 }
 
 void UEnemyFSM::IdleState()
@@ -60,10 +64,11 @@ void UEnemyFSM::IdleState()
 
         // 애니메이션 상태 동기화
         anim->animState = mState;
+
+        // 최초 랜덤한 위치 정해주기
+        GetRandomPositionInNavMesh(me->GetActorLocation(), 500, randomPos);
     }
 }
-
-
 
 
 void UEnemyFSM::MoveState()
@@ -80,12 +85,47 @@ void UEnemyFSM::MoveState()
     // 2. 방향이 필요하다.
     FVector dir = destination - me->GetActorLocation();
     // 3. 방향으로 이동하고 싶다.
-    me->AddMovementInput(dir.GetSafeNormal());
+    // me->AddMovementInput(dir.GetSafeNormal());
+    ai->MoveToLocation(destination);
 
+    // NavigationSystem 객체 얻어오기
+    auto ns = UNavigationSystemV1::GetNavigationSystem(GetWorld());
+
+    // 목적지 길 찾기 경로 데이터 검색
+    FPathFindingQuery query;
+    FAIMoveRequest req;
+
+    // 목적지에서 인지할 수 있는 범위
+    req.SetAcceptanceRadius(3);
+    req.SetGoalLocation(destination);
+    // 길 찾기를 위한 쿼리 생성
+    ai->BuildPathfindingQuery(req, query);
+    // 길 찾기 결과 가져오기
+    FPathFindingResult r = ns->FindPathSync(query);
+    // 목적지 까지의 길찾기 성공 여부 확인
+    if (r.Result == ENavigationQueryResult::Success)
+    {
+        // 타깃쪽으로 이동
+        ai->MoveToLocation(destination);
+    }
+    else
+    {
+        // 랜덤 위치로 이동
+        auto result = ai->MoveToLocation(randomPos);
+        // 목적지에 도착하면
+        if (result == EPathFollowingRequestResult::AlreadyAtGoal)
+        {
+            // 새로운 랜덤 위치 가져오기
+            GetRandomPositionInNavMesh(me->GetActorLocation(), 500, randomPos);
+        }
+    }
     // 타깃과 가까워지면 공격 상태로 전환하고 싶다.
     // 1. 만약 거리가 공격 범위 안에 들어오면
     if (dir.Size() < attackRange)
     {
+        // 길 찾기 기능 정기
+        ai->StopMovement();
+
         //2. 공격 상태로 전환하고 싶다.
         mState = EEnemyState::Attack;
 
@@ -102,27 +142,34 @@ void UEnemyFSM::AttackState()
 {
     //목표: 일정시간에 한 번씩 공격하고 싶다.
     //1.시간이 흘러야한다.
-    currentTime += GetWorld()->DeltaRealTimeSeconds;
+    currentTime += GetWorld()->DeltaTimeSeconds;
     //2. 공격 시간이 됐으니까
     if (currentTime > attackDelayTime)
     {
+        currentTime = 0;
+        anim->bAttackPlay = true;
         // 3.공격하고 싶다.
         me->RootFire();
         //UE_LOG(LogTemp, Warning, TEXT("Attack!!"));
         // 경과 시간 초기화
-        currentTime = 0;
-        anim->bAttackPlay = true;
     }
+
+    // 에너미가 플레이어 방향을 바라보고 따라가게 하고 싶다.
+    FVector Dir = target->GetActorLocation() - me->GetActorLocation();
+    me->SetActorRotation(Dir.Rotation());
     // 목표: 타킷이 공격 범위를 벗어나면 상태를 이동으로 전환하고 싶다.
     //1. 타깃과의 거리가 필요하다.
     float distance = FVector::Distance(target->GetActorLocation(), me->GetActorLocation());
     //2. 타깃과의 거리가 공격 범위를 벗어났으니까
-    if (distance > attackRange)
+    if (distance > attackRange+100)
     {
         // 3.상태를 이동으로 전환하고 싶다.
         mState = EEnemyState::Move;
         // 애니메이션 상태 동기화
         anim->animState = mState;
+
+        GetRandomPositionInNavMesh(me->GetActorLocation(), 500, randomPos);
+
     }
 }
 
@@ -182,6 +229,17 @@ void UEnemyFSM::OnDamageProcess()
     }
     // 애니메이션 상태 동기화
     anim->animState = mState;
+
+    ai->StopMovement();
+}
+
+bool UEnemyFSM::GetRandomPositionInNavMesh(FVector centerLocation, float radius, FVector& dest)
+{
+    auto ns = UNavigationSystemV1::GetNavigationSystem(GetWorld());
+    FNavLocation loc;
+    bool result = ns->GetRandomReachablePointInRadius(centerLocation, radius, loc);
+    dest = loc.Location;
+    return result;
 }
 
 
@@ -189,6 +247,8 @@ void UEnemyFSM::OnDamageProcess()
 void UEnemyFSM::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
     Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+
+    if (me->isInteract) return;
 
     switch (mState)
     {

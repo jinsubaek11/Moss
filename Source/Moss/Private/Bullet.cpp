@@ -37,11 +37,14 @@ ABullet::ABullet()
     // 초기속도
     movementComp->InitialSpeed = 5000;
     // 최대속도
-    movementComp->MaxSpeed = 1500;
+    movementComp->MaxSpeed = 200;
     // 반동 여부
     movementComp->bShouldBounce = true;
     // 반동 값
-    movementComp->Bounciness = 0.5f;
+    movementComp->Bounciness = 1.0f;
+        
+    //SetLifeSpan(2);
+    InitialLifeSpan = 2;
 }
 
 // Called when the game starts or when spawned
@@ -49,16 +52,15 @@ void ABullet::BeginPlay()
 {
     Super::BeginPlay();
 
-    // InitialLifeSpan = 2;
-    // SetLifeSpan(2);
-    FTimerHandle dieTimerHandle;
-    //GetWorldTimerManager().SetTimer(dieTimerHandle, this, &ABulletActor::OnDie, 0.1f);
+    //FTimerHandle dieTimerHandle;
+    //GetWorldTimerManager().SetTimer(dieTimerHandle, this, &ABullet::OnDie, 0.1f);
 
-    GetWorldTimerManager().SetTimer(dieTimerHandle, FTimerDelegate::CreateLambda(
-        [this]()->void {
-            this->Destroy();
-        }
-    ), 2, false);
+    //GetWorldTimerManager().SetTimer(dieTimerHandle, FTimerDelegate::CreateLambda(
+    //    [this]()->void {
+    //        this->Destroy();
+    //    }
+    //), 2, false);
+
 
 }
 
@@ -67,6 +69,7 @@ void ABullet::Tick(float DeltaTime)
 {
     Super::Tick(DeltaTime);
 
+    SetActorLocation(GetActorLocation() + GetActorForwardVector() * 900 * DeltaTime);
 }
 
 void ABullet::OnDie()

@@ -37,20 +37,27 @@ AEnemy::AEnemy()
         GetMesh()->SetAnimInstanceClass(tempClass.Class);
     }
 
-    // 1. 총 스켈레탈메시 컴포넌트 등록
-    gunMeshComp = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("GunMeshComp"));
-    // 1-1. 부모 컴포넌트를 Mesh 컴포넌트로 설정
-    gunMeshComp->SetupAttachment(GetMesh());
-    // 1-2. 스켈레탈메시 데이터 로드
-    ConstructorHelpers::FObjectFinder<USkeletalMesh> TempGunMesh(TEXT("/Script/Engine.SkeletalMesh'/Game/FPWeapon/Mesh/SK_FPGun.SK_FPGun'"));
-    // 2. 읽어왔을때 성공했다면
-    if (TempGunMesh.Succeeded())
+    ConstructorHelpers::FObjectFinder<UMaterialInterface> wolfMat(TEXT("/Script/Engine.Material'/Game/VR/Material/M_InteractiveWolf.M_InteractiveWolf'"));
+    if (wolfMat.Succeeded())
     {
-        // 3. Mesh에 적용하고싶다. 
-        GetMesh()->SetSkeletalMesh(TempGunMesh.Object);
-        // 4. Transform 을 수정하고싶다.
-        GetMesh()->SetRelativeLocationAndRotation(FVector(0, 0, -90), FRotator(0, -90, 0));
+        originalWolfMaterial = wolfMat.Object;
+        GetMesh()->SetMaterial(0, wolfMat.Object);
     }
+
+    //// 1. 총 스켈레탈메시 컴포넌트 등록
+    //gunMeshComp = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("GunMeshComp"));
+    //// 1-1. 부모 컴포넌트를 Mesh 컴포넌트로 설정
+    //gunMeshComp->SetupAttachment(GetMesh());
+    //// 1-2. 스켈레탈메시 데이터 로드
+    //ConstructorHelpers::FObjectFinder<USkeletalMesh> TempGunMesh(TEXT("/Script/Engine.SkeletalMesh'/Game/FPWeapon/Mesh/SK_FPGun.SK_FPGun'"));
+    //// 2. 읽어왔을때 성공했다면
+    //if (TempGunMesh.Succeeded())
+    //{
+    //    // 3. Mesh에 적용하고싶다. 
+    //    GetMesh()->SetSkeletalMesh(TempGunMesh.Object);
+    //    // 4. Transform 을 수정하고싶다.
+    //    GetMesh()->SetRelativeLocationAndRotation(FVector(0, 0, -90), FRotator(0, -90, 0));
+    //}
 
 }
 
@@ -59,6 +66,8 @@ void AEnemy::BeginPlay()
 {
     Super::BeginPlay();
 
+    dynamicWolfMaterial = UMaterialInstanceDynamic::Create(originalWolfMaterial, this);
+    GetMesh()->SetMaterial(0, dynamicWolfMaterial);
 }
 
 // Called every frame
@@ -66,6 +75,10 @@ void AEnemy::Tick(float DeltaTime)
 {
     Super::Tick(DeltaTime);
 
+    if (isInteract && !isHighlight)
+    {
+        BeforeInteract();
+    }
 }
 
 // Called to bind functionality to input
@@ -77,8 +90,63 @@ void AEnemy::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 
 void AEnemy::RootFire()
 {
-    // 총알 발사 처리
-    FTransform firePosition = gunMeshComp->GetSocketTransform(TEXT("FirePosition"));
-    GetWorld()->SpawnActor<ABullet>(bulletFactory, firePosition.GetLocation(), GetActorRotation());
+    FRotator rot = GetActorRotation();
 
+    if (isInteract)
+    {
+        rot.Pitch = 0.;
+        AfterInteract();
+    }
+
+    GetWorld()->SpawnActor<ABullet>(bulletFactory, GetActorLocation(), rot);
+}
+
+void AEnemy::SetInteract(bool value)
+{
+    isInteract = value;
+}
+
+void AEnemy::BeforeInteract()
+{
+    isHighlight = true;
+    SetHighlight();
+}
+
+void AEnemy::Interact(FVector start, FVector end)
+{
+    FRotator rot = (end - start).Rotation();
+    SetActorRotation(rot);
+}
+
+void AEnemy::AfterInteract()
+{
+    isHighlight = false;
+    SetHighlight();
+}
+
+void AEnemy::SetHighlight()
+{
+    if (highlightTime >= highlightCoolTime)
+    {
+        highlightTime = 0.f;
+        GetWorld()->GetTimerManager().ClearTimer(highlightTimer);
+
+        return;
+    }
+
+    highlightTime += GetWorld()->GetDeltaSeconds();
+
+    float brightness;
+
+    if (isHighlight)
+    {
+        brightness = FMath::Lerp<float>(defaultBrightness, modifiedBrightness, highlightTime / highlightCoolTime);
+    }
+    else
+    {
+        brightness = FMath::Lerp<float>(modifiedBrightness, defaultBrightness, highlightTime / highlightCoolTime);
+    }
+
+    dynamicWolfMaterial->SetVectorParameterValue(TEXT("Brightness"), FVector4(brightness, brightness, brightness, brightness));
+    GetWorld()->GetTimerManager().SetTimer(highlightTimer, this, &AEnemy::SetHighlight, 0.02);
 }
