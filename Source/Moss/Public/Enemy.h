@@ -38,4 +38,23 @@ public:
 
     // 총알발사 처리 함수
     void RootFire();
+
+    void SetInteract(bool value);
+    void Interact(FVector start, FVector end);
+    bool isInteract;
+
+    void SetHighlight();
+    void BeforeInteract();
+    void AfterInteract();
+    bool isHighlight = false;
+    float defaultBrightness = 0.f;
+    float modifiedBrightness = 1.f;
+    float highlightTime = 0.f;
+    float highlightCoolTime = 0.5f;
+    FTimerHandle highlightTimer;
+    UPROPERTY()
+    class UMaterialInterface* originalWolfMaterial;
+    UPROPERTY()
+    class UMaterialInstanceDynamic* dynamicWolfMaterial;
+
 };

@@ -190,6 +190,8 @@ void UEnemyFSM::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompon
 {
     Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
+    if (me->isInteract) return;
+
     switch (mState)
     {
 

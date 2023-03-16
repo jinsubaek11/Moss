@@ -31,17 +31,18 @@ ABullet::ABullet()
     //meshComp->SetCollisionProfileName(TEXT("NoCollision"));
 
        // 발사체 컴포넌트
-    movementComp = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("movementComp"));
-    // movement 컴포넌트가 갱신시킬 컴포넌트 지정
-    movementComp->SetUpdatedComponent(sphereComp);
-    // 초기속도
-    movementComp->InitialSpeed = 5000;
-    // 최대속도
-    movementComp->MaxSpeed = 1500;
-    // 반동 여부
-    movementComp->bShouldBounce = true;
-    // 반동 값
-    movementComp->Bounciness = 0.5f;
+    //movementComp = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("movementComp"));
+    //// movement 컴포넌트가 갱신시킬 컴포넌트 지정
+    //movementComp->SetUpdatedComponent(sphereComp);
+    //// 초기속도
+    //movementComp->InitialSpeed = 5000;
+    //// 최대속도
+    //movementComp->MaxSpeed = 1500;
+    //// 반동 여부
+    //movementComp->bShouldBounce = true;
+    //// 반동 값
+    //movementComp->Bounciness = 0.5f;
+    //movementComp->    
 }
 
 // Called when the game starts or when spawned
@@ -67,6 +68,7 @@ void ABullet::Tick(float DeltaTime)
 {
     Super::Tick(DeltaTime);
 
+    SetActorLocation(GetActorLocation() + GetActorForwardVector() * 900 * DeltaTime);
 }
 
 void ABullet::OnDie()
