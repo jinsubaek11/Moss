@@ -9,6 +9,7 @@
 #include "MainCharacter.h"
 #include <Components/CapsuleComponent.h>
 #include <NavigationSystem.h>
+#include <AIController.h>
 
 // Sets default values for this component's properties
 UEnemyFSM::UEnemyFSM()
@@ -43,7 +44,7 @@ void UEnemyFSM::BeginPlay()
 void UEnemyFSM::IdleState()
 {
     // 1. 시간이 흘렀으니까
-    currentTime += GetWorld()->DeltaRealTimeSeconds;
+    currentTime += GetWorld()->DeltaTimeSeconds;
     // 1. 만약 경과 시간이 대기 시간을 초과했다면
     if (currentTime > idleDelayTime)
     {
@@ -51,7 +52,14 @@ void UEnemyFSM::IdleState()
         mState = EEnemyState::Move;
         // 경과 시간 초기화
         currentTime = 0;
+        // 애니메이션 상태 동기화
+        anim->animState = mState;
+
+        // 최초 랜덤한 위치 정해주기
+        GetRandomPositionInNavMesh(me->GetActorLocation(), 500, randomPos);
+
     }
+
     // 목표 : 타깃이 공격 범위를 벗어나면 상태를 이동으로 전환하고 싶다.
     // 1. 타깃과의 기리가 필요하다.
     float distance = FVector::Distance(target->GetActorLocation(), me->GetActorLocation());
@@ -61,12 +69,6 @@ void UEnemyFSM::IdleState()
     {
         // 3. 상태를 이동으로 전환하고 싶다.
         mState = EEnemyState::Move;
-
-        // 애니메이션 상태 동기화
-        anim->animState = mState;
-
-        // 최초 랜덤한 위치 정해주기
-        GetRandomPositionInNavMesh(me->GetActorLocation(), 500, randomPos);
     }
 }
 
@@ -86,7 +88,7 @@ void UEnemyFSM::MoveState()
     FVector dir = destination - me->GetActorLocation();
     // 3. 방향으로 이동하고 싶다.
     // me->AddMovementInput(dir.GetSafeNormal());
-    ai->MoveToLocation(destination);
+    // ai->MoveToLocation(destination);
 
     // NavigationSystem 객체 얻어오기
     auto ns = UNavigationSystemV1::GetNavigationSystem(GetWorld());
@@ -116,14 +118,14 @@ void UEnemyFSM::MoveState()
         if (result == EPathFollowingRequestResult::AlreadyAtGoal)
         {
             // 새로운 랜덤 위치 가져오기
-            GetRandomPositionInNavMesh(me->GetActorLocation(), 500, randomPos);
+            GetRandomPositionInNavMesh(me->GetActorLocation(), 200, randomPos);
         }
     }
     // 타깃과 가까워지면 공격 상태로 전환하고 싶다.
     // 1. 만약 거리가 공격 범위 안에 들어오면
     if (dir.Size() < attackRange)
     {
-        // 길 찾기 기능 정기
+        // 길 찾기 기능 정지
         ai->StopMovement();
 
         //2. 공격 상태로 전환하고 싶다.
@@ -157,11 +159,12 @@ void UEnemyFSM::AttackState()
     // 에너미가 플레이어 방향을 바라보고 따라가게 하고 싶다.
     FVector Dir = target->GetActorLocation() - me->GetActorLocation();
     me->SetActorRotation(Dir.Rotation());
+
     // 목표: 타킷이 공격 범위를 벗어나면 상태를 이동으로 전환하고 싶다.
     //1. 타깃과의 거리가 필요하다.
     float distance = FVector::Distance(target->GetActorLocation(), me->GetActorLocation());
     //2. 타깃과의 거리가 공격 범위를 벗어났으니까
-    if (distance > attackRange+100)
+    if (distance > attackRange)
     {
         // 3.상태를 이동으로 전환하고 싶다.
         mState = EEnemyState::Move;

@@ -66,7 +66,7 @@ public:
 
     // 공격 범위
     UPROPERTY(EditAnywhere, Category = FSM)
-        float attackRange = 500.0f;
+        float attackRange = 200.0f;
 
     // 공격 대기 시간
     UPROPERTY(EditAnywhere, Category = FSM)
