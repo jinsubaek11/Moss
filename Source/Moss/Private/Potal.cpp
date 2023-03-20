@@ -24,6 +24,8 @@ APotal::APotal()
 	gatewayOuterComp->SetupAttachment(RootComponent);
 
 	gatewayInnerComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("gatewayInnerComp"));
+	gatewayInnerComp->SetCollisionProfileName(TEXT("PortalPreset"));
+
 	ConstructorHelpers::FObjectFinder<UStaticMesh> innerMesh(TEXT("/Script/Engine.StaticMesh'/Engine/BasicShapes/Plane.Plane'"));
 	if (innerMesh.Succeeded())
 	{
@@ -46,6 +48,8 @@ void APotal::BeginPlay()
 	
 	boxComp->OnComponentBeginOverlap.AddDynamic(this, &APotal::InPortal);
 	boxComp->OnComponentEndOverlap.AddDynamic(this, &APotal::OutPortal);
+
+	gatewayInnerComp->OnComponentBeginOverlap.AddDynamic(this,&APotal::InGateway);
 
 	mainCharacter = Cast<AMainCharacter>(UGameplayStatics::GetActorOfClass(GetWorld(), AMainCharacter::StaticClass()));
 
@@ -78,7 +82,7 @@ void APotal::InPortal(UPrimitiveComponent* OverlappedComponent, AActor* OtherAct
 
 void APotal::OutPortal(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
-	UE_LOG(LogTemp, Warning, TEXT("Out"));
+	//UE_LOG(LogTemp, Warning, TEXT("Out"));
 
 
 
@@ -104,5 +108,13 @@ void APotal::PlayGateAnimation()
 	});
 
 	GetWorld()->GetTimerManager().SetTimer(gateAnimationTimer, timerDelegate, .01, true);
+}
+
+void APotal::InGateway(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	FTimerHandle levelOpenDelay;
+	FTimerDelegate openTimerDelegate;
+	openTimerDelegate.BindLambda([this]()->void { UGameplayStatics::OpenLevel(this, TEXT("Four")); isFourLevel=true;});
+	GetWorld()->GetTimerManager().SetTimer(levelOpenDelay,openTimerDelegate,0.9f,false);
 }
 

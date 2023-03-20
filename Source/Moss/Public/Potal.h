@@ -52,4 +52,8 @@ public:
 	int gateAnimationCount = 0;
 	int maxGateAnimationCount = 60;
 
+	UFUNCTION()
+	void InGateway(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+
+	bool isFourLevel = false;
 };
