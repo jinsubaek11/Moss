@@ -26,17 +26,17 @@ public:
     // Called to bind functionality to input
     virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
-    // Àû AI °ü¸® ÄÄÆ÷³ÍÆ® Å¬·¡½º
+    // ï¿½ï¿½ AI ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ® Å¬ï¿½ï¿½ï¿½ï¿½
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = FSMComponent)
         class UEnemyFSM* fsm;
-    // ÃÑ ½ºÄÌ·¹Å»¸Þ½Ã
+    // ï¿½ï¿½ ï¿½ï¿½ï¿½Ì·ï¿½Å»ï¿½Þ½ï¿½
     //UPROPERTY(EditAnywhere, Category=GunMesh)
     //    class USkeletalMeshComponent* gunMeshComp;
 
     UPROPERTY(EditAnywhere, Category = BulletFactory)
         TSubclassOf<class ABullet> bulletFactory;
 
-    // ÃÑ¾Ë¹ß»ç Ã³¸® ÇÔ¼ö
+    // ï¿½Ñ¾Ë¹ß»ï¿½ Ã³ï¿½ï¿½ ï¿½Ô¼ï¿½
     void RootFire();
 
     void SetInteract(bool value);
@@ -57,8 +57,7 @@ public:
     UPROPERTY()
     class UMaterialInstanceDynamic* dynamicWolfMaterial;
 
-    // ÃÑ¾Ë ÆÄÆí È¿°ú °øÀå
+    // ï¿½Ñ¾ï¿½ ï¿½ï¿½ï¿½ï¿½ È¿ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 	UPROPERTY(EditAnywhere, Category=BulletEffect)
 	class UParticleSystem* bulletEffectFactory;
-
 };

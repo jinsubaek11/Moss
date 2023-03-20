@@ -14,37 +14,50 @@ ABullet::ABullet()
     PrimaryActorTick.bCanEverTick = true;
 
 
-    // Ãæµ¹Ã¼, ¿Ü°ü, ÀÌµ¿ÄÄÆ÷³ÍÆ®
+    // ï¿½æµ¹Ã¼, ï¿½Ü°ï¿½, ï¿½Ìµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ®
     sphereComp = CreateDefaultSubobject<USphereComponent>(TEXT("sphereComp"));
     SetRootComponent(sphereComp);
-    // Ãæµ¹Ã¼ Å©±â¼³Á¤
+    // ï¿½æµ¹Ã¼ Å©ï¿½â¼³ï¿½ï¿½
     sphereComp->SetSphereRadius(13);
-    // Ãæµ¹ÇÁ·ÎÆÄÀÏ ¼³Á¤
+    // ï¿½æµ¹ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
     sphereComp->SetCollisionProfileName(TEXT("BlockAll"));
-    // ºÎ¸ð ÄÄÆ÷³ÍÆ® ÁöÁ¤
+    // ï¿½Î¸ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ® ï¿½ï¿½ï¿½ï¿½
     meshComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("meshComp"));
     meshComp->SetupAttachment(RootComponent);
-    // ¿Ü°ü Å©±â ¼³Á¤
+    // ï¿½Ü°ï¿½ Å©ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
     meshComp->SetRelativeScale3D(FVector(0.25f));
-    // Ãæµ¹ ºñÈ°¼ºÈ­
+    // ï¿½æµ¹ ï¿½ï¿½È°ï¿½ï¿½È­
     meshComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
     //meshComp->SetCollisionProfileName(TEXT("NoCollision"));
 
-       // ¹ß»çÃ¼ ÄÄÆ÷³ÍÆ®
-    movementComp = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("movementComp"));
-    // movement ÄÄÆ÷³ÍÆ®°¡ °»½Å½ÃÅ³ ÄÄÆ÷³ÍÆ® ÁöÁ¤
-    movementComp->SetUpdatedComponent(sphereComp);
-    // ÃÊ±â¼Óµµ
-    movementComp->InitialSpeed = 5000;
-    // ÃÖ´ë¼Óµµ
-    movementComp->MaxSpeed = 200;
-    // ¹Ýµ¿ ¿©ºÎ
-    movementComp->bShouldBounce = true;
-    // ¹Ýµ¿ °ª
-    movementComp->Bounciness = 1.0f;
+       // ï¿½ß»ï¿½Ã¼ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ®
+    // movementComp = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("movementComp"));
+    // // movement ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ®ï¿½ï¿½ ï¿½ï¿½ï¿½Å½ï¿½Å³ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ® ï¿½ï¿½ï¿½ï¿½
+    // movementComp->SetUpdatedComponent(sphereComp);
+    // // ï¿½Ê±ï¿½Óµï¿½
+    // movementComp->InitialSpeed = 5000;
+    // // ï¿½Ö´ï¿½Óµï¿½
+    // movementComp->MaxSpeed = 200;
+    // // ï¿½Ýµï¿½ ï¿½ï¿½ï¿½ï¿½
+    // movementComp->bShouldBounce = true;
+    // // ï¿½Ýµï¿½ ï¿½ï¿½
+    // movementComp->Bounciness = 1.0f;
         
-    //SetLifeSpan(2);
-    InitialLifeSpan = 2;
+    // //SetLifeSpan(2);
+    // InitialLifeSpan = 2;
+
+    //movementComp = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("movementComp"));
+    //// movement ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ®ï¿½ï¿½ ï¿½ï¿½ï¿½Å½ï¿½Å³ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ® ï¿½ï¿½ï¿½ï¿½
+    //movementComp->SetUpdatedComponent(sphereComp);
+    //// ï¿½Ê±ï¿½Óµï¿½
+    //movementComp->InitialSpeed = 5000;
+    //// ï¿½Ö´ï¿½Óµï¿½
+    //movementComp->MaxSpeed = 1500;
+    //// ï¿½Ýµï¿½ ï¿½ï¿½ï¿½ï¿½
+    //movementComp->bShouldBounce = true;
+    //// ï¿½Ýµï¿½ ï¿½ï¿½
+    //movementComp->Bounciness = 0.5f;
+    //movementComp->    
 }
 
 // Called when the game starts or when spawned
