@@ -54,7 +54,7 @@ void AMainCharacter::BeginPlay()
 
 	hp = initialHp;
 
-
+	GetCharacterMovement()->JumpZVelocity = 600;
 }
 
 void AMainCharacter::Tick(float DeltaTime)
@@ -78,12 +78,12 @@ void AMainCharacter::InputJump()
 
 void AMainCharacter::InputRun()
 {
-	GetCharacterMovement()->MaxWalkSpeed = 500;
+	GetCharacterMovement()->MaxWalkSpeed = 600;
 }
 
 void AMainCharacter::Walk()
 {
-	GetCharacterMovement()->MaxWalkSpeed = 300;
+	GetCharacterMovement()->MaxWalkSpeed = 500;
 
 }
 

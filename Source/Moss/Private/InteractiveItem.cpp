@@ -13,8 +13,6 @@ AInteractiveItem::AInteractiveItem()
 
 	meshComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Static Mesh Component"));
 	meshComp->SetupAttachment(RootComponent);
-
-
 }
 
 void AInteractiveItem::BeginPlay()

@@ -84,7 +84,7 @@ private:
 	bool isOverlapping = false;
 
 	float normalRange = 500.f;
-	float collisionRange = 1300.f;
+	float collisionRange = 3000.f;
 
 	float moveTime = 0.f;
 	float moveCoolTime = 0.3f;

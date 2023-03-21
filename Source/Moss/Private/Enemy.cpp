@@ -15,22 +15,22 @@ AEnemy::AEnemy()
 
     // Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
     PrimaryActorTick.bCanEverTick = true;
-    // 1.½ºÄÌ·¹Å»¸Ş½Ã µ¥ÀÌÅÍ ·Îµå
+    // 1.ìŠ¤ì¼ˆë ˆíƒˆë©”ì‹œ ë°ì´í„° ë¡œë“œ
     ConstructorHelpers::FObjectFinder<USkeletalMesh>tempMesh(TEXT("/Script/Engine.SkeletalMesh'/Game/AnimalVarietyPack/Wolf/Meshes/SK_Wolf.SK_Wolf'"));
-    //1.µ¥ÀÌÅÍ ·Îµå ¼º°øÇÏ¸é
+    //1.ë°ì´í„° ë¡œë“œ ì„±ê³µí•˜ë©´
     if (tempMesh.Succeeded())
     {
-        //1-2. µ¥ÀÌÅÍÇÒ´ç
+        //1-2. ë°ì´í„°í• ë‹¹
         GetMesh()->SetSkeletalMesh(tempMesh.Object);
-        //1-3. ¸Ş½Ã À§Ä¡ ¹× È¸Àü ¼³Á¤
+        //1-3. ë©”ì‹œ ìœ„ì¹˜ ë° íšŒì „ ì„¤ì •
         GetMesh()->SetRelativeLocationAndRotation(FVector(0, 0, -88), FRotator(0, -90, 0));
-        // 1-4. ¸Ş½Ã Å©±â ¼öÁ¤
+        // 1-4. ë©”ì‹œ í¬ê¸° ìˆ˜ì •
         GetMesh()->SetRelativeScale3D(FVector(0.84f));
     }
-    // EnemyFSM ÄÄÆ÷³ÍÆ® Ãß°¡
+    // EnemyFSM ì»´í¬ë„ŒíŠ¸ ì¶”ê°€
     fsm = CreateDefaultSubobject<UEnemyFSM>(TEXT("FSM"));
 
-    // ¾Ö´Ï¸ŞÀÌ¼Ç ºí·çÇÁ¸°Æ® ÇÒ´çÇÏ±â
+    // ì• ë‹ˆë©”ì´ì…˜ ë¸”ë£¨í”„ë¦°íŠ¸ í• ë‹¹í•˜ê¸°
     ConstructorHelpers::FClassFinder<UAnimInstance> tempClass(TEXT("/Script/Engine.AnimBlueprint'/Game/VR/Blueprints/ABP_EnemyWolf.ABP_EnemyWolf_C'"));
     if (tempClass.Succeeded())
     {
@@ -44,21 +44,26 @@ AEnemy::AEnemy()
         GetMesh()->SetMaterial(0, wolfMat.Object);
     }
 
-    //// 1. ÃÑ ½ºÄÌ·¹Å»¸Ş½Ã ÄÄÆ÷³ÍÆ® µî·Ï
+    //// 1. ì´ ìŠ¤ì¼ˆë ˆíƒˆë©”ì‹œ ì»´í¬ë„ŒíŠ¸ ë“±ë¡
     //gunMeshComp = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("GunMeshComp"));
-    //// 1-1. ºÎ¸ğ ÄÄÆ÷³ÍÆ®¸¦ Mesh ÄÄÆ÷³ÍÆ®·Î ¼³Á¤
+    //// 1-1. ë¶€ëª¨ ì»´í¬ë„ŒíŠ¸ë¥¼ Mesh ì»´í¬ë„ŒíŠ¸ë¡œ ì„¤ì •
     //gunMeshComp->SetupAttachment(GetMesh());
-    //// 1-2. ½ºÄÌ·¹Å»¸Ş½Ã µ¥ÀÌÅÍ ·Îµå
+    //// 1-2. ìŠ¤ì¼ˆë ˆíƒˆë©”ì‹œ ë°ì´í„° ë¡œë“œ
     //ConstructorHelpers::FObjectFinder<USkeletalMesh> TempGunMesh(TEXT("/Script/Engine.SkeletalMesh'/Game/FPWeapon/Mesh/SK_FPGun.SK_FPGun'"));
-    //// 2. ÀĞ¾î¿ÔÀ»¶§ ¼º°øÇß´Ù¸é
+    //// 2. ì½ì–´ì™”ì„ë•Œ ì„±ê³µí–ˆë‹¤ë©´
     //if (TempGunMesh.Succeeded())
     //{
-    //    // 3. Mesh¿¡ Àû¿ëÇÏ°í½Í´Ù. 
+    //    // 3. Meshì— ì ìš©í•˜ê³ ì‹¶ë‹¤. 
     //    GetMesh()->SetSkeletalMesh(TempGunMesh.Object);
-    //    // 4. Transform À» ¼öÁ¤ÇÏ°í½Í´Ù.
+    //    // 4. Transform ì„ ìˆ˜ì •í•˜ê³ ì‹¶ë‹¤.
     //    GetMesh()->SetRelativeLocationAndRotation(FVector(0, 0, -90), FRotator(0, -90, 0));
     //}
 
+
+
+    // ì›”ë“œì— ë°°ì¹˜ë˜ê±°ë‚˜ ìŠ¤í°ë  ë•Œ ìë™ìœ¼ë¡œ
+    // AIControllerë¶€í„° Possessë  ìˆ˜ ìˆë„ë¡ ì„¤ì •
+    AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
 }
 
 // Called when the game starts or when spawned

@@ -1,0 +1,55 @@
+
+struct RMStruct
+{
+    float RMSphere(float3 pos)
+    {
+        return length(pos) - 50;
+    }
+
+    float3 RMNormal(float3 pos)
+    {   
+        float2 eps = float2(.001, 0);
+
+        return normalize(float3(
+            RMSphere(pos + eps.xyy) - RMSphere(pos - eps.xyy),
+            RMSphere(pos + eps.yxy) - RMSphere(pos - eps.yxy),
+            RMSphere(pos + eps.yyx) - RMSphere(pos - eps.yyx)
+        ));
+    }
+
+    float onSmoothUnion(float d1, float2 d2, float k)
+    {
+        float h = clamp(.5 + .5 * (d2 - d1)/k, 0., 1.);
+        return lerp(d2, d1, h) - k*h*(1.-h);
+    }
+
+} RM;
+
+float4 col = 0;
+float3 pos = WorldPosition;
+float3 normal = 0;
+
+for (int i = 0; i < MaxSteps; i++)
+{
+    if (SceneDepth < length(pos - CameraPosition))
+    break;
+
+    float d1 = RM.RMSphere(pos - ObjectPosition);
+    //float d2 = SceneDepth - length(pos - CameraPosition);
+    float d2 = GetDistanceToNearestSurfaceGlobal(pos);
+    //float d2 = DistNearest;
+    float dist = RM.onSmoothUnion(d1, d2, Smooth);
+
+    if (dist < Stop)
+    {
+        col = 1;
+        normal = RM.RMNormal(pos - ObjectPosition);
+        break;
+    }
+
+    pos += CameraVector * 1;
+}
+
+col = float4(normal, col.a);
+
+return col;

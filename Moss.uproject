@@ -45,6 +45,10 @@
 				"Mac",
 				"Linux"
 			]
+		},
+		{
+			"Name": "HDRIBackdrop",
+			"Enabled": true
 		}
 	],
 	"TargetPlatforms": [
