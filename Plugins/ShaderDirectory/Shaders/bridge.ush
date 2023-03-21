@@ -3,7 +3,8 @@ struct Functions
 {
     float Sphere(float3 pos)
     {
-        return length(pos) - 130;
+        float3 p = length(pos) - 110;
+        return p;
     }
 
     float Box(float3 pos, float3 size)
@@ -52,6 +53,7 @@ for (int i = 0; i < MaxSteps; i++)
     break;
 
     float d1 = f.GetDist(pos - ObjectPosition);
+    //d1 += (sin(20 * (pos - ObjectPosition).x) * sin(20 * (pos - ObjectPosition).y) * sin(20 * (pos - ObjectPosition).z)) * 100;
     float d2 = DistNearest;
     float dist = f.OnSmoothUnion(d1, d2, Smooth);
 

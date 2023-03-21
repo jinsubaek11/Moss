@@ -17,8 +17,8 @@ APotal::APotal()
 	boxComp->SetCollisionProfileName(TEXT("PortalPreset"));
 	boxComp-> SetBoxExtent(FVector(75,65,100));
 
-	doorComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("doorComp"));
-	doorComp-> SetupAttachment(RootComponent);
+	//doorComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("doorComp"));
+	//doorComp-> SetupAttachment(RootComponent);
 
 	gatewayOuterComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("gatewayOuterComp"));
 	gatewayOuterComp->SetupAttachment(RootComponent);

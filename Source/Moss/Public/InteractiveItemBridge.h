@@ -27,5 +27,14 @@ private:
 	TArray<class AInteractiveItemStone*> stones;
 
 	FTimerHandle bridgeTimer;
+	float bridgeTime;
+	float bridgeMaxTime = 3.f;
+	float bridgePoint = 0.25f;
+	float bridgeWeight = 0.25f;
+	bool isMade = false;
+
+	FVector origin;
+	FVector endPos;
+
 	int currentStoneIndex;
 };

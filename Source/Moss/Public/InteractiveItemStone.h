@@ -17,9 +17,9 @@ protected:
 	virtual void BeginPlay() override;
 
 public:
-	void SetActiveSmoothStone();
-	void SetOrigin(FVector loc);
-	FVector GetNextPosition() const;
+	//void SetActiveSmoothStone();
+	//void SetOrigin(FVector loc);
+	//FVector GetNextPosition() const;
 
 private:
 	UPROPERTY(EditAnywhere)
