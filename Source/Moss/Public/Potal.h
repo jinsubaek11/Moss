@@ -52,4 +52,5 @@ public:
 	int gateAnimationCount = 0;
 	int maxGateAnimationCount = 60;
 
+
 };

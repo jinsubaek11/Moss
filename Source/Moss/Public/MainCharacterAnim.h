@@ -35,16 +35,29 @@ public:
 	class UAnimMontage* finishAnimMontage;
 	UPROPERTY(EditDefaultsOnly, Category = PlayerAnim)
 	class UAnimMontage* magicAnimMontage;
+	UPROPERTY(EditDefaultsOnly, Category = PlayerAnim)
+	class UAnimMontage* DeathMontage;
+
 
 	//공격 애니메이션 재생함수
 	void PlayAttackAnim();
 	void PlayFinishAnim();
 	void PlayMagicAnim();
+	void PlayDeathAnim();
 
 	UFUNCTION()
 	void AnimNotify_FinishEnd();
 	UFUNCTION()
 	void AnimNotify_MagicEnd();
+	UFUNCTION()
+	void AnimNotify_DeathEnd();
 
-	bool isMagicEnd=true;
+	bool isMagicEnd = true;
+
+	FString* Three;
+
+	bool isDeathEnd = false;
+
+	
+
 };

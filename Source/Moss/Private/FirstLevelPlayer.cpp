@@ -11,6 +11,9 @@
 #include <MotionControllerComponent.h>
 #include <Camera/CameraComponent.h>
 #include "Components/SceneComponent.h"
+#include "Blueprint/UserWidget.h"
+#include "Components/WidgetComponent.h"
+
 
 
 
@@ -54,6 +57,11 @@ AFirstLevelPlayer::AFirstLevelPlayer()
 		RightHandMesh->SetRelativeLocation(FVector(-2.9f, 3.5f, 4.5f));
 		RightHandMesh->SetRelativeRotation(FRotator(25, 0, 90));
 	}
+
+	//endingUI = CreateDefaultSubobject<UWidgetComponent>(TEXT("endingUI"));
+	//endingUI->Location
+	//endingUI->SetVisibility(false);
+
 }
 
 void AFirstLevelPlayer::BeginPlay()
@@ -92,11 +100,25 @@ void AFirstLevelPlayer::BeginPlay()
 	{
 		UHeadMountedDisplayFunctionLibrary::SetTrackingOrigin(EHMDTrackingOrigin::Eye);
 	}
+
+	
+
 }
 
 void AFirstLevelPlayer::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+	//if (potal->isFourLevel == true)
+	//{
+	////	UE_LOG(LogTemp, Warning, TEXT("visibility"));
+		//endingUI->SetVisibility(true);
+	//}
+	//else
+	//{
+	//	return;
+
+	//}
 
 }
 
@@ -111,6 +133,7 @@ void AFirstLevelPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 		inputSystem->BindAction(IA_HelperMouse, ETriggerEvent::Triggered, this, &AFirstLevelPlayer::SetHelperActivate);
 		inputSystem->BindAction(IA_HelperMove, ETriggerEvent::Triggered, this, &AFirstLevelPlayer::SetHelperMove);
 		inputSystem->BindAction(IA_Move, ETriggerEvent::Triggered, this, &AFirstLevelPlayer::Move);
+		inputSystem->BindAction(IA_Quit, ETriggerEvent::Triggered, this, &AFirstLevelPlayer::Exit);
 		PlayerInputComponent->BindAction(TEXT("Jump"), IE_Pressed, this, &AFirstLevelPlayer::Jumping);
 		PlayerInputComponent->BindAction(TEXT("Attack"), IE_Pressed, this, &AFirstLevelPlayer::Attack);
 		PlayerInputComponent->BindAction(TEXT("Run"), IE_Pressed, this, &AFirstLevelPlayer::Running);
@@ -137,7 +160,7 @@ void AFirstLevelPlayer::Move(const FInputActionValue& Values)
 	{
 		return;
 	}
-	if (potal->isPlayEndingAnimation)
+	if (potal->isPlayEndingAnimation )
 	{
 		mainCharacter->AddMovementInput(FVector(0, 0, 0), axis.X);
 		mainCharacter->AddMovementInput(FVector(0, 0, 0), axis.Y);
@@ -226,3 +249,10 @@ void AFirstLevelPlayer::Magical()
 {
 	mainCharacter->InputMagic();
 }
+
+void AFirstLevelPlayer::Exit()
+{
+	UE_LOG(LogTemp,Warning,TEXT("exit"));
+	UKismetSystemLibrary::QuitGame(GetWorld(), nullptr, EQuitPreference::Quit, false);
+}
+
