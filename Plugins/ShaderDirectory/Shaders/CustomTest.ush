@@ -1,2 +1,90 @@
-float3 col = mul(A, B);
+
+
+struct Function
+{
+
+} f;
+
+float dst = 0;
+float4 col = 0;
+float3 pos = worldPos - objPos;
+
+for (int i = 0; i < 100; i++)
+{
+    float dst = length(pos) - 100;
+    if (dst > 300)
+    {
+        col = 0;
+        break;
+    }
+
+    if (dst < 0.01)
+    {
+        //col = dot(normalize(pos), normalize(float3(1.,2.,3.)))*.5+.5;
+        col = 1.;
+        break;
+    }
+
+    pos += cameraVector * dst;
+}
+
+
+
 return col;
+
+
+
+// struct Function
+// {
+//     float2 rayBoxDst(float3 boundsMin, float3 boundsMax, float3 rayOrigin, float3 rayDir)
+//     {
+//         float3 t0 = (boundsMin - rayOrigin) / rayDir;
+//         float3 t1 = (boundsMax - rayOrigin) / rayDir;
+//         float3 tmin = min(t0, t1);
+//         float3 tmax = max(t0, t1);
+
+//         float dstA = max(max(tmin.x, tmin.y), tmin.z);
+//         float dstB = min(tmax.x, min(tmax.y, tmax.z));
+
+//         float dstToBox = max(0, dstA);
+//         float dstInsidebox = max(0, dstB - dstToBox);
+       
+//         return float2(dstToBox, dstInsidebox);
+//     }
+
+//     float raySphereDst(float3 rayOrigin, float3 rayDir)
+//     {
+//         float dstToSphereA = max(0, length(rayOrigin) - 3.);
+//         float dstToSphereB = max(0, length(rayOrigin) + 3.);
+
+//         float dstToSphere = max(0, dstToSphereA);
+//         float dstInsideSphere = max(0, dstToSphereB - dstToSphere);
+        
+//         return float2(dstToSphere, dstInsideSphere);
+//     }
+// } f;
+
+// float4 col = sceneTex;
+// float3 rayOrigin = float3(camPos.x, camPos.z, camPos.y);
+// float3 rayDir = normalize(float3(camDir.x, camDir.z, camDir.y));
+
+// // float2 rayBoxInfo = f.rayBoxDst(boundsMin, boundsMax, rayOrigin, rayDir);
+// // float dstToBox = rayBoxInfo.x;
+// // float dstInsidebox = rayBoxInfo.y;
+
+// // bool rayHitBox = dstInsidebox > 0;
+// // if (!rayHitBox)
+// // {
+// //     col = float4(0.,0.,0.,1.);
+// // }
+
+// float2 raySphereInfo = f.raySphereDst(rayOrigin, rayDir);
+// float dstToSphere = raySphereInfo.x;
+// float dstToInsideSphere = raySphereInfo.y;
+
+// if (dstToInsideSphere > 0)
+// {
+//     col = float4(0.,0.,0.,1.);
+// }
+
+// return col;

@@ -8,6 +8,7 @@ UENUM()
 enum class EItemType : uint8
 {
 	BOX,
+	BRIDGE,
 };
 
 UCLASS()

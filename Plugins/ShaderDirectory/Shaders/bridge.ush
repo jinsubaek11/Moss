@@ -1,0 +1,67 @@
+
+struct Functions
+{
+    float Sphere(float3 pos)
+    {
+        return length(pos) - 130;
+    }
+
+    float Box(float3 pos, float3 size)
+    {
+        float3 p = abs(pos) - size;
+        return length(max(p, 0.)) + min(max(p.x, max(p.y, p.z)), 0.);
+    }
+
+    float GetDist(float3 pos)
+    {
+        float p = Box(pos, float3(100.,100.,100.));
+        p = Sphere(pos);
+        return p;
+    }
+
+    float3 GetNormal(float3 pos)
+    {   
+        float d = GetDist(pos);
+        float2 eps = float2(.001, 0);
+
+        return normalize(d - float3(GetDist(pos - eps.xyy), GetDist(pos - eps.yxy), GetDist(pos - eps.yyx)));
+        
+        // float2 eps = float2(.001, 0);
+
+        // return normalize(float3(
+        //     Sphere(pos + eps.xyy) - Sphere(pos - eps.xyy),
+        //     Sphere(pos + eps.yxy) - Sphere(pos - eps.yxy),
+        //     Sphere(pos + eps.yyx) - Sphere(pos - eps.yyx)
+        // ));
+    }
+
+    float OnSmoothUnion(float d1, float2 d2, float k)
+    {
+        float h = clamp(.5 + .5 * (d2 - d1)/k, 0., 1.);
+        return lerp(d2, d1, h) - k*h*(1.-h);
+    }
+} f;
+
+float4 col = 0;
+float3 pos = WorldPosition;
+float3 normal = 0;
+
+for (int i = 0; i < MaxSteps; i++)
+{
+    if (SceneDepth < length(pos - CameraPosition))
+    break;
+
+    float d1 = f.GetDist(pos - ObjectPosition);
+    float d2 = DistNearest;
+    float dist = f.OnSmoothUnion(d1, d2, Smooth);
+
+    if (dist < Stop)
+    {
+        col = 1;
+        break;
+    }
+
+    pos += CameraVector * 1;
+}
+
+return col;

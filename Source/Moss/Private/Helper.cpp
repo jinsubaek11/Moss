@@ -112,6 +112,7 @@ void AHelper::Tick(float DeltaTime)
 		AInteractiveItem* item = Cast<AInteractiveItem>(interactTarget);
 		if (item)
 		{
+			UE_LOG(LogTemp, Warning, TEXT("isInteractToTarget && isReadyToInteract"));
 			InteractToItem();
 			item->SetIsReadyToInteract(false);	
 		}
@@ -338,12 +339,16 @@ void AHelper::InteractToItem()
 {
 	AInteractiveItem* item = Cast<AInteractiveItem>(interactTarget);
 	if (!item) return;
+	UE_LOG(LogTemp, Warning, TEXT("item"));
 
 	switch (item->GetType())
 	{
 	case EItemType::BOX:
 		item->Interact(interactStartPos, interactEndPos);
 		break;
+	case EItemType::BRIDGE:
+		UE_LOG(LogTemp, Warning, TEXT("BRIDGE"));
+		item->Interact();
 	}
 }
 
