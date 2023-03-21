@@ -8,7 +8,7 @@ public class Moss : ModuleRules
 	{
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 	
-		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "EnhancedInput", "Niagara", "HeadMountedDisplay","NavigationSystem", "AIModule"});
+		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "EnhancedInput", "Niagara", "HeadMountedDisplay", "UMG", "AIModule","NavigationSystem" });
 
 		PrivateDependencyModuleNames.AddRange(new string[] {  });
 

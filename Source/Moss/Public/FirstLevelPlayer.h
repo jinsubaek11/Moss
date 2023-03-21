@@ -41,8 +41,10 @@ public:
 	class UInputAction* IA_HelperMove;
 	UPROPERTY(EditDefaultsOnly, Category = "Input")
 	class UInputAction* IA_Move;
+	UPROPERTY(EditDefaultsOnly, Category = "Input")
+	class UInputAction* IA_Quit;
 
-public:
+
 	UPROPERTY(VisibleAnywhere, Category = "VRCamera")
 	class USceneComponent* rootComp;
 	UPROPERTY(VisibleAnywhere, Category = "VRCamera")
@@ -72,4 +74,10 @@ public:
 	void Running();
 	void StopRunning();
 	void Magical();
+	void Exit();
+
+	//UPROPERTY(EditAnywhere)
+	//class UWidgetComponent* endingUI;
+
+	
 };
