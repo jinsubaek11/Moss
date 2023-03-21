@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
+#include <AIModule/Classes/AIController.h>
 #include "EnemyFSM.generated.h"
 
 // 사용할 상태 정의
@@ -65,7 +66,7 @@ public:
 
     // 공격 범위
     UPROPERTY(EditAnywhere, Category = FSM)
-        float attackRange = 500.0f;
+        float attackRange = 200.0f;
 
     // 공격 대기 시간
     UPROPERTY(EditAnywhere, Category = FSM)
@@ -90,4 +91,13 @@ public:
     // 사용 중인 애니메이션 블루프린트
     UPROPERTY()
         class UEnemyAnim* anim;
+
+    // Enemy를 소유하고 있는 AIController
+    UPROPERTY()
+    class AAIController* ai;
+
+    // 길 찾기 수행시 랜덤 위치
+    FVector randomPos;
+    // 랜덤 위치 가져오기
+    bool GetRandomPositionInNavMesh(FVector centerLocation, float radius, FVector& dest);
 };
