@@ -15,22 +15,22 @@ AEnemy::AEnemy()
 
     // Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
     PrimaryActorTick.bCanEverTick = true;
-    // 1.���̷�Ż�޽� ������ �ε�
+    // 1.스켈레탈메시 데이터 로드
     ConstructorHelpers::FObjectFinder<USkeletalMesh>tempMesh(TEXT("/Script/Engine.SkeletalMesh'/Game/AnimalVarietyPack/Wolf/Meshes/SK_Wolf.SK_Wolf'"));
-    //1.������ �ε� �����ϸ�
+    //1.데이터 로드 성공하면
     if (tempMesh.Succeeded())
     {
-        //1-2. �������Ҵ�
+        //1-2. 데이터할당
         GetMesh()->SetSkeletalMesh(tempMesh.Object);
-        //1-3. �޽� ��ġ �� ȸ�� ����
+        //1-3. 메시 위치 및 회전 설정
         GetMesh()->SetRelativeLocationAndRotation(FVector(0, 0, -88), FRotator(0, -90, 0));
-        // 1-4. �޽� ũ�� ����
+        // 1-4. 메시 크기 수정
         GetMesh()->SetRelativeScale3D(FVector(0.84f));
     }
-    // EnemyFSM ������Ʈ �߰�
+    // EnemyFSM 컴포넌트 추가
     fsm = CreateDefaultSubobject<UEnemyFSM>(TEXT("FSM"));
 
-    // �ִϸ��̼� ��������Ʈ �Ҵ��ϱ�
+    // 애니메이션 블루프린트 할당하기
     ConstructorHelpers::FClassFinder<UAnimInstance> tempClass(TEXT("/Script/Engine.AnimBlueprint'/Game/VR/Blueprints/ABP_EnemyWolf.ABP_EnemyWolf_C'"));
     if (tempClass.Succeeded())
     {
@@ -44,25 +44,26 @@ AEnemy::AEnemy()
         GetMesh()->SetMaterial(0, wolfMat.Object);
     }
 
-    //// 1. �� ���̷�Ż�޽� ������Ʈ ���
+    //// 1. 총 스켈레탈메시 컴포넌트 등록
     //gunMeshComp = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("GunMeshComp"));
-    //// 1-1. �θ� ������Ʈ�� Mesh ������Ʈ�� ����
+    //// 1-1. 부모 컴포넌트를 Mesh 컴포넌트로 설정
     //gunMeshComp->SetupAttachment(GetMesh());
-    //// 1-2. ���̷�Ż�޽� ������ �ε�
+    //// 1-2. 스켈레탈메시 데이터 로드
     //ConstructorHelpers::FObjectFinder<USkeletalMesh> TempGunMesh(TEXT("/Script/Engine.SkeletalMesh'/Game/FPWeapon/Mesh/SK_FPGun.SK_FPGun'"));
-    //// 2. �о������ �����ߴٸ�
+    //// 2. 읽어왔을때 성공했다면
     //if (TempGunMesh.Succeeded())
     //{
-    //    // 3. Mesh�� �����ϰ��ʹ�. 
+    //    // 3. Mesh에 적용하고싶다. 
     //    GetMesh()->SetSkeletalMesh(TempGunMesh.Object);
-    //    // 4. Transform �� �����ϰ��ʹ�.
+    //    // 4. Transform 을 수정하고싶다.
     //    GetMesh()->SetRelativeLocationAndRotation(FVector(0, 0, -90), FRotator(0, -90, 0));
     //}
 
-    // ���忡 ��ġ�ǰų� ������ �� �ڵ�����
-    
-    // AIController���� Possess�� �� �ֵ��� ����
-    AutoPossessAI=EAutoPossessAI::PlacedInWorldOrSpawned;
+
+
+    // 월드에 배치되거나 스폰될 때 자동으로
+    // AIController부터 Possess될 수 있도록 설정
+    AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
 }
 
 // Called when the game starts or when spawned

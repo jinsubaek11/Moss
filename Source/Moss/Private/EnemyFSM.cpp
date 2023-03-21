@@ -88,7 +88,7 @@ void UEnemyFSM::MoveState()
     FVector dir = destination - me->GetActorLocation();
     // 3. 방향으로 이동하고 싶다.
     // me->AddMovementInput(dir.GetSafeNormal());
-    // ai->MoveToLocation(destination);
+    ai->MoveToLocation(destination);
 
     // NavigationSystem 객체 얻어오기
     auto ns = UNavigationSystemV1::GetNavigationSystem(GetWorld());
