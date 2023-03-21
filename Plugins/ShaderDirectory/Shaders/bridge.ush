@@ -3,7 +3,7 @@ struct Functions
 {
     float Sphere(float3 pos)
     {
-        float3 p = length(pos) - 110;
+        float p = length(pos) - 110;
         return p;
     }
 
@@ -60,10 +60,13 @@ for (int i = 0; i < MaxSteps; i++)
     if (dist < Stop)
     {
         col = 1;
+        normal = f.GetNormal(pos - ObjectPosition);
         break;
     }
 
     pos += CameraVector * 1;
 }
+
+col = float4(normal, col.a);
 
 return col;

@@ -31,7 +31,7 @@ void AInteractiveItemBridge::BeginPlay()
 	}
 
 	origin = GetActorLocation();
-	endPos = origin + GetActorForwardVector() * 1000;
+	endPos = origin + GetActorForwardVector() * 800;
 
 	dynamicMat->SetScalarParameterValue(TEXT("Smooth"), 200);
 }
