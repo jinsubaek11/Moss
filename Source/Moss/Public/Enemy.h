@@ -26,17 +26,17 @@ public:
     // Called to bind functionality to input
     virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
-    // �� AI ���� ������Ʈ Ŭ����
+    // 적 AI 관리 컴포넌트 클래스
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = FSMComponent)
         class UEnemyFSM* fsm;
-    // �� ���̷�Ż�޽�
+    // 총 스켈레탈메시
     //UPROPERTY(EditAnywhere, Category=GunMesh)
     //    class USkeletalMeshComponent* gunMeshComp;
 
     UPROPERTY(EditAnywhere, Category = BulletFactory)
         TSubclassOf<class ABullet> bulletFactory;
 
-    // �Ѿ˹߻� ó�� �Լ�
+    // 총알발사 처리 함수
     void RootFire();
 
     void SetInteract(bool value);
@@ -57,7 +57,8 @@ public:
     UPROPERTY()
     class UMaterialInstanceDynamic* dynamicWolfMaterial;
 
-    // �Ѿ� ���� ȿ�� ����
+    // 총알 파편 효과 공장
 	UPROPERTY(EditAnywhere, Category=BulletEffect)
 	class UParticleSystem* bulletEffectFactory;
+
 };
