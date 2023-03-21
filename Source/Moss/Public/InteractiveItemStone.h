@@ -29,7 +29,7 @@ private:
 
 	FTimerHandle stoneMoveTimer;
 	float moveTime = 0.f;
-	float moveCoolTime = 1.5f;
+	float moveCoolTime = 0.7f;
 
 	float smoothTime = 0.f;
 	float smoothCoolTime = 1.f;

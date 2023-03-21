@@ -53,7 +53,7 @@ void AInteractiveItemBridge::Interact(FVector start, FVector end)
 		}
 	});
 
-	GetWorldTimerManager().SetTimer(bridgeTimer, timerDelegate, 1.5f, true);
+	GetWorldTimerManager().SetTimer(bridgeTimer, timerDelegate, 0.7f, true);
 }
 
 void AInteractiveItemBridge::AfterInteract()

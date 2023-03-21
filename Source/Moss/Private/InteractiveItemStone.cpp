@@ -77,11 +77,11 @@ void AInteractiveItemStone::SetActiveSmoothStone()
 
 		moveTime += GetWorld()->GetDeltaSeconds();
 
-		//if (moveTime > 0.4f)
+		//if (moveTime > 0.2f)
 		//{
 			//float smoothValue = FMath::Lerp<float>(60, 200, smoothTime / smoothCoolTime);
 			//dynamicMat->SetScalarParameterValue(TEXT("Smooth"), smoothValue);
-			dynamicMat->SetScalarParameterValue(TEXT("Smooth"), 200);
+			dynamicMat->SetScalarParameterValue(TEXT("Smooth"), 300);
 		//}
 
 		FVector endPos = origin + GetActorForwardVector() * 350;
